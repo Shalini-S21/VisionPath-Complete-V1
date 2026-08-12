@@ -1,137 +1,108 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { Map, CheckCircle2, Clock, PlayCircle, Sparkles, BookOpen } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
-import studyPlanService from '../../services/studyPlanService';
-import Button from '../../components/ui/Button';
-import Badge from '../../components/ui/Badge';
+import { Map, CheckCircle2, Loader2 } from 'lucide-react';
+import useAuth from '../../hooks/useAuth';
+import studyPlanService from '../../services/studyPlan/studyPlanService';
+import Badge from '../../components/common/Badge';
 import toast from 'react-hot-toast';
 
 export const CareerRoadmap = () => {
   const { user } = useAuth();
-  const { activeRoadmap } = useSelector((state) => state.student);
-  const [roadmapSteps, setRoadmapSteps] = useState(activeRoadmap.steps);
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchStudyPlans = async () => {
+    setLoading(true);
+    try {
+      const response = await studyPlanService.getAllPlans();
+      const resData = response.data?.data || response.data || [];
+      setPlans(Array.isArray(resData) ? resData : []);
+    } catch (err) {
+      console.error('Failed to load study plans:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPlans = async () => {
-      if (!user?.id) return;
-      try {
-        const res = await studyPlanService.getPlansByUser(user.id);
-        const data = res.data || res;
-        if (Array.isArray(data) && data.length > 0 && data[0].tasks) {
-          const mapped = data[0].tasks.map((t, idx) => ({
-            id: t.id || idx + 1,
-            title: t.taskName || t.title || `Module ${idx + 1}`,
-            status: t.completed ? 'completed' : 'in-progress',
-            duration: '2 Weeks',
-          }));
-          setRoadmapSteps(mapped);
-        }
-      } catch (err) {
-        console.warn('Backend getPlansByUser notice:', err?.message || err);
-      }
-    };
-    fetchPlans();
+    fetchStudyPlans();
   }, [user]);
 
-  const toggleStep = async (id) => {
-    const updated = roadmapSteps.map(s => {
-      if (s.id === id) {
-        const nextStatus = s.status === 'completed' ? 'in-progress' : s.status === 'in-progress' ? 'pending' : 'completed';
-        toast.success(`Milestone '${s.title}' set to ${nextStatus.toUpperCase()}`);
-        return { ...s, status: nextStatus };
-      }
-      return s;
-    });
-    setRoadmapSteps(updated);
-
+  const toggleTaskStatus = async (taskId, currentStatus) => {
     try {
-      const targetStep = updated.find(s => s.id === id);
-      if (targetStep) {
-        await studyPlanService.updateTask(id, {
-          taskName: targetStep.title,
-          completed: targetStep.status === 'completed',
-        });
-      }
+      const nextStatus = currentStatus === 'COMPLETED' ? 'IN_PROGRESS' : 'COMPLETED';
+      await studyPlanService.updateTask(taskId, { status: nextStatus });
+      toast.success(`Task status updated to ${nextStatus}`);
+      fetchStudyPlans();
     } catch (err) {
-      console.warn('Backend updateTask notice:', err?.message || err);
+      console.error('Failed to update task:', err);
+      toast.error('Failed to update task status.');
     }
   };
 
   return (
     <div className="space-y-8">
-      {/* Roadmap Header Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2">
           <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-            Active Learning Path
+            Active Study Plans & Learning Goals
           </span>
-          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white">{activeRoadmap.title}</h1>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Estimated Duration: {activeRoadmap.estimatedWeeks} Weeks • {activeRoadmap.completedModules} of {activeRoadmap.totalModules} Modules Finished
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Personalized Study Roadmap</h1>
+          <p className="text-xs text-slate-500">
+            Synchronized with study-plan-service
           </p>
         </div>
-
-        <div className="w-full md:w-64 space-y-2">
-          <div className="flex justify-between text-xs font-semibold">
-            <span className="text-gray-700 dark:text-gray-300">Completion</span>
-            <span className="text-emerald-600 dark:text-emerald-400">{activeRoadmap.completionRate}%</span>
-          </div>
-          <div className="w-full bg-gray-100 dark:bg-slate-800 rounded-full h-3">
-            <div className="bg-emerald-600 h-3 rounded-full" style={{ width: `${activeRoadmap.completionRate}%` }} />
-          </div>
-        </div>
       </div>
 
-      {/* Interactive Vertical Timeline */}
-      <div className="relative pl-6 sm:pl-10 space-y-8 before:absolute before:left-3 sm:before:left-5 before:top-3 before:bottom-3 before:w-0.5 before:bg-emerald-200 dark:before:bg-slate-800">
-        {roadmapSteps.map((step, idx) => (
-          <div key={step.id} className="relative group">
-            {/* Dot Indicator */}
-            <div
-              onClick={() => toggleStep(step.id)}
-              className={`absolute -left-6 sm:-left-10 top-4 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-transform group-hover:scale-110 ${
-                step.status === 'completed'
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                  : step.status === 'in-progress'
-                  ? 'bg-amber-500 text-white ring-4 ring-amber-100 dark:ring-amber-950 animate-pulse'
-                  : 'bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-slate-700 text-gray-400'
-              }`}
-            >
-              {step.status === 'completed' ? (
-                <CheckCircle2 className="w-4 h-4" />
-              ) : (
-                <span className="text-[10px] font-bold">{idx + 1}</span>
+      {loading ? (
+        <div className="p-12 flex flex-col items-center justify-center text-slate-400 gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+          <p className="text-sm font-semibold">Loading study plans from study-plan-service...</p>
+        </div>
+      ) : plans.length === 0 ? (
+        <div className="p-12 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+          <Map className="w-10 h-10 text-slate-300 mx-auto" />
+          <p className="text-sm font-bold text-slate-700 dark:text-slate-200">No active study plans found</p>
+          <p className="text-xs text-slate-400 max-w-sm mx-auto">Create a study plan or generate one via AI Mentor to populate learning tasks.</p>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {plans.map((plan) => (
+            <div key={plan.id} className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">{plan.title || 'Personalized Career Plan'}</h2>
+                  <p className="text-xs text-slate-500">{plan.description || plan.goal}</p>
+                </div>
+                <Badge variant="success">{plan.status || 'ACTIVE'}</Badge>
+              </div>
+
+              {plan.tasks && plan.tasks.length > 0 && (
+                <div className="space-y-3 pt-2">
+                  {plan.tasks.map((task, idx) => (
+                    <div key={task.id || idx} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2
+                          onClick={() => toggleTaskStatus(task.id, task.status)}
+                          className={`w-4 h-4 cursor-pointer ${
+                            task.status === 'COMPLETED' ? 'text-emerald-600' : 'text-slate-300'
+                          }`}
+                        />
+                        <div>
+                          <p className="font-bold text-slate-900 dark:text-white">{task.title}</p>
+                          <p className="text-[11px] text-slate-400">{task.topic} • Due: {task.dueDate || 'Flexible'}</p>
+                        </div>
+                      </div>
+                      <Badge variant={task.status === 'COMPLETED' ? 'success' : 'warning'} size="xs">
+                        {task.status || 'PENDING'}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
-
-            {/* Content Box */}
-            <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-xs hover:border-emerald-500/40 transition-colors space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                  Module {idx + 1} • {step.duration}
-                </span>
-                <Badge
-                  variant={step.status === 'completed' ? 'success' : step.status === 'in-progress' ? 'warning' : 'gray'}
-                >
-                  {step.status}
-                </Badge>
-              </div>
-
-              <h3 className="text-base font-bold text-gray-900 dark:text-white">{step.title}</h3>
-
-              <div className="flex items-center justify-between pt-2">
-                <button
-                  onClick={() => toggleStep(step.id)}
-                  className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-                >
-                  {step.status === 'completed' ? 'Mark In Progress' : 'Toggle Milestone Status'}
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

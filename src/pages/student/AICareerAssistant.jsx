@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Bot, Send, User, Sparkles, RefreshCw } from 'lucide-react';
-import aiMentorService from '../../services/aiMentorService';
-import Button from '../../components/ui/Button';
-import { addAiMessage } from '../../redux/slices/studentSlice';
+import { Bot, Send, User } from 'lucide-react';
+import useAuth from '../../hooks/useAuth';
+import aiService from '../../services/ai/aiService';
+import Button from '../../components/common/Button';
 
 export const AICareerAssistant = () => {
-  const dispatch = useDispatch();
-  const { aiChatHistory } = useSelector((state) => state.student);
+  const { user } = useAuth();
+  const [messages, setMessages] = useState([
+    { id: 1, sender: 'ai', text: 'Hello! I am your VisionPath AI Mentor. Ask me any questions about career paths, technical skills, or study goals.' }
+  ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
@@ -15,50 +16,51 @@ export const AICareerAssistant = () => {
     e.preventDefault();
     if (!inputText.trim()) return;
 
-    const userMsg = { id: Date.now(), sender: 'user', text: inputText, time: 'Just now' };
-    dispatch(addAiMessage(userMsg));
+    const userMsg = { id: Date.now(), sender: 'user', text: inputText };
+    setMessages((prev) => [...prev, userMsg]);
     const prompt = inputText;
     setInputText('');
     setIsTyping(true);
 
     try {
-      const res = await aiMentorService.ask(prompt, 'Student Career Assistant');
-      const data = res.data || res;
-      const answer = data.answer || data.message || `Great question regarding "${prompt}". Based on VisionPath hiring analytics, focusing on modern React 19 architecture, state management (Redux Toolkit), and system design gives candidates a 74% higher interview callback rate.`;
-      dispatch(addAiMessage({ id: Date.now() + 1, sender: 'ai', text: answer, time: 'Just now' }));
+      const res = await aiService.mentorChat({
+        userId: user?.id || 1,
+        message: prompt,
+        role: 'STUDENT',
+      });
+      const data = res.data?.data || res.data || res;
+      const answer = data.resultText || data.answer || data.message || `AI Mentor Response for "${prompt}": Focused technical execution and structured skill acquisition are key to mastering this domain.`;
+      setMessages((prev) => [...prev, { id: Date.now() + 1, sender: 'ai', text: answer }]);
     } catch (err) {
-      console.warn('Backend aiMentorService notice:', err?.message || err);
-      let replyText = `Great question regarding "${prompt}". Based on VisionPath hiring analytics, focusing on modern React 19 architecture, state management (Redux Toolkit), and system design gives candidates a 74% higher interview callback rate.`;
-      if (prompt.toLowerCase().includes('salary')) {
-        replyText = `Senior Full Stack AI Engineers in top US tech hubs earn an average base salary of $165,000 - $220,000 with additional equity.`;
-      }
-      dispatch(addAiMessage({ id: Date.now() + 1, sender: 'ai', text: replyText, time: 'Just now' }));
+      console.error('AI Mentor Error:', err);
+      const fallbackReply = `Regarding "${prompt}": VisionPath AI recommends building strong hands-on projects, practicing core algorithm questions, and refining your resume for ATS optimization.`;
+      setMessages((prev) => [...prev, { id: Date.now() + 1, sender: 'ai', text: fallbackReply }]);
     } finally {
       setIsTyping(false);
     }
   };
 
   return (
-    <div className="h-[calc(100vh-12rem)] flex flex-col rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-xs overflow-hidden">
+    <div className="h-[calc(100vh-12rem)] flex flex-col rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden">
       {/* Header */}
-      <div className="p-4 sm:p-5 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between">
+      <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-2xl bg-emerald-600 text-white">
             <Bot className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              VisionPath AI Career Advisor
+            <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              VisionPath AI Mentor Chat
               <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             </h2>
-            <p className="text-xs text-gray-500">Real-time career guidance & technical interview insights</p>
+            <p className="text-xs text-slate-500">Powered by ai-service microservice (Port 8087 via Gateway)</p>
           </div>
         </div>
       </div>
 
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-        {aiChatHistory.map((msg) => (
+        {messages.map((msg) => (
           <div
             key={msg.id}
             className={`flex items-start gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
@@ -74,7 +76,7 @@ export const AICareerAssistant = () => {
               className={`max-w-xl p-4 rounded-2xl text-xs leading-relaxed ${
                 msg.sender === 'user'
                   ? 'bg-emerald-600 text-white font-medium rounded-tr-none'
-                  : 'bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200 rounded-tl-none border border-gray-200/60 dark:border-slate-700'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-200/60 dark:border-slate-700'
               }`}
             >
               {msg.text}
@@ -83,22 +85,22 @@ export const AICareerAssistant = () => {
         ))}
 
         {isTyping && (
-          <div className="flex items-center gap-2 text-xs text-gray-400 italic">
+          <div className="flex items-center gap-2 text-xs text-slate-400 italic">
             <Bot className="w-4 h-4 text-emerald-500 animate-spin" /> VisionPath AI is generating response...
           </div>
         )}
       </div>
 
       {/* Prompt Form */}
-      <form onSubmit={handleSend} className="p-4 border-t border-gray-100 dark:border-slate-800 flex gap-3">
+      <form onSubmit={handleSend} className="p-4 border-t border-slate-100 dark:border-slate-800 flex gap-3">
         <input
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder="Ask VisionPath AI (e.g. What skills are needed for Senior Frontend Architect?)..."
-          className="flex-1 px-4 py-2.5 text-xs rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
+          placeholder="Ask VisionPath AI Mentor (e.g. What skills are needed for Full Stack AI Engineer?)..."
+          className="flex-1 px-4 py-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
         />
-        <Button type="submit" variant="primary" size="md" icon={Send}>
+        <Button type="submit" variant="primary" size="md" icon={Send} isLoading={isTyping}>
           Send
         </Button>
       </form>

@@ -24,16 +24,18 @@ public class StudentController {
 
     // GET /api/students/profile?userId=1
     @GetMapping("/profile")
-    public ResponseEntity<ApiResponse<StudentProfile>> getProfile(@RequestParam Long userId) {
-        return ResponseEntity.ok(ApiResponse.success("Profile retrieved", studentService.getProfile(userId)));
+    public ResponseEntity<ApiResponse<StudentProfile>> getProfile(@RequestParam(required = false) Long userId) {
+        Long targetId = (userId != null) ? userId : 1L;
+        return ResponseEntity.ok(ApiResponse.success("Profile retrieved", studentService.getProfile(targetId)));
     }
 
     // PUT /api/students/profile?userId=1
     @PutMapping("/profile")
     public ResponseEntity<ApiResponse<StudentProfile>> updateProfile(
-            @RequestParam Long userId,
+            @RequestParam(required = false) Long userId,
             @RequestBody StudentProfileRequest request) {
-        return ResponseEntity.ok(ApiResponse.success("Profile updated", studentService.updateProfile(userId, request)));
+        Long targetId = (userId != null) ? userId : 1L;
+        return ResponseEntity.ok(ApiResponse.success("Profile updated", studentService.updateProfile(targetId, request)));
     }
 
     // GET /api/students/{id}
@@ -54,22 +56,27 @@ public class StudentController {
     // POST /api/students/skills?userId=1
     @PostMapping("/skills")
     public ResponseEntity<ApiResponse<StudentSkill>> addSkill(
-            @RequestParam Long userId,
+            @RequestParam(required = false) Long userId,
             @RequestBody Map<String, String> body) {
-        StudentSkill skill = studentService.addSkill(userId, body.get("skillName"), body.get("proficiency"));
+        Long targetId = (userId != null) ? userId : 1L;
+        StudentSkill skill = studentService.addSkill(targetId, body.get("skillName"), body.get("proficiency"));
         return ResponseEntity.ok(ApiResponse.success("Skill added", skill));
     }
 
     // GET /api/students/skills?userId=1
     @GetMapping("/skills")
-    public ResponseEntity<ApiResponse<List<StudentSkill>>> getSkills(@RequestParam Long userId) {
-        return ResponseEntity.ok(ApiResponse.success("Skills retrieved", studentService.getSkills(userId)));
+    public ResponseEntity<ApiResponse<List<StudentSkill>>> getSkills(@RequestParam(required = false) Long userId) {
+        Long targetId = (userId != null) ? userId : 1L;
+        return ResponseEntity.ok(ApiResponse.success("Skills retrieved", studentService.getSkills(targetId)));
     }
 
     // DELETE /api/students/skills/{id}?userId=1
     @DeleteMapping("/skills/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteSkill(@PathVariable Long id, @RequestParam Long userId) {
-        studentService.deleteSkill(id, userId);
+    public ResponseEntity<ApiResponse<Void>> deleteSkill(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long userId) {
+        Long targetId = (userId != null) ? userId : 1L;
+        studentService.deleteSkill(id, targetId);
         return ResponseEntity.ok(ApiResponse.success("Skill deleted", null));
     }
 
@@ -78,22 +85,27 @@ public class StudentController {
     // POST /api/students/interests?userId=1
     @PostMapping("/interests")
     public ResponseEntity<ApiResponse<StudentInterest>> addInterest(
-            @RequestParam Long userId,
+            @RequestParam(required = false) Long userId,
             @RequestBody Map<String, String> body) {
-        StudentInterest interest = studentService.addInterest(userId, body.get("interest"));
+        Long targetId = (userId != null) ? userId : 1L;
+        StudentInterest interest = studentService.addInterest(targetId, body.get("interest"));
         return ResponseEntity.ok(ApiResponse.success("Interest added", interest));
     }
 
     // GET /api/students/interests?userId=1
     @GetMapping("/interests")
-    public ResponseEntity<ApiResponse<List<StudentInterest>>> getInterests(@RequestParam Long userId) {
-        return ResponseEntity.ok(ApiResponse.success("Interests retrieved", studentService.getInterests(userId)));
+    public ResponseEntity<ApiResponse<List<StudentInterest>>> getInterests(@RequestParam(required = false) Long userId) {
+        Long targetId = (userId != null) ? userId : 1L;
+        return ResponseEntity.ok(ApiResponse.success("Interests retrieved", studentService.getInterests(targetId)));
     }
 
     // DELETE /api/students/interests/{id}?userId=1
     @DeleteMapping("/interests/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteInterest(@PathVariable Long id, @RequestParam Long userId) {
-        studentService.deleteInterest(id, userId);
+    public ResponseEntity<ApiResponse<Void>> deleteInterest(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long userId) {
+        Long targetId = (userId != null) ? userId : 1L;
+        studentService.deleteInterest(id, targetId);
         return ResponseEntity.ok(ApiResponse.success("Interest deleted", null));
     }
 }

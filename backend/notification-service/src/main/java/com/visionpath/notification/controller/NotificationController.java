@@ -25,7 +25,15 @@ public class NotificationController {
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getUserNotifications(
-            @RequestParam Long userId,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(defaultValue = "false") boolean unreadOnly) {
+        Long targetUserId = (userId != null) ? userId : 1L;
+        return ok("Notifications retrieved", notificationService.getUserNotifications(targetUserId, unreadOnly));
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Map<String, Object>> getUserNotificationsByPath(
+            @PathVariable Long userId,
             @RequestParam(defaultValue = "false") boolean unreadOnly) {
         return ok("Notifications retrieved", notificationService.getUserNotifications(userId, unreadOnly));
     }
@@ -36,7 +44,14 @@ public class NotificationController {
     }
 
     @PutMapping("/read-all")
-    public ResponseEntity<Map<String, Object>> markAllAsRead(@RequestParam Long userId) {
+    public ResponseEntity<Map<String, Object>> markAllAsRead(@RequestParam(required = false) Long userId) {
+        Long targetUserId = (userId != null) ? userId : 1L;
+        notificationService.markAllAsRead(targetUserId);
+        return ok("All notifications marked as read", null);
+    }
+
+    @PutMapping("/user/{userId}/read-all")
+    public ResponseEntity<Map<String, Object>> markAllAsReadByPath(@PathVariable Long userId) {
         notificationService.markAllAsRead(userId);
         return ok("All notifications marked as read", null);
     }

@@ -1,38 +1,45 @@
 import React from 'react';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
-const StatCard = ({ title, value, change, isIncrease, icon: Icon, color = 'emerald', className = '' }) => {
-  const colorMap = {
-    emerald: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600',
-    blue: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600',
-    purple: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600',
-    orange: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600',
-    rose: 'bg-rose-50 dark:bg-rose-900/20 text-rose-600',
-    yellow: 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600',
-  };
-  const iconBg = colorMap[color] || colorMap.emerald;
-
+export const StatCard = ({
+  title,
+  value,
+  change,
+  isIncrease = true,
+  icon: Icon,
+  description,
+}) => {
   return (
-    <div className={`glass-panel rounded-2xl p-5 flex items-start gap-4 card-hover ${className}`}>
-      {Icon && (
-        <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBg}`}>
-          <Icon className="w-5 h-5" />
-        </div>
-      )}
-      <div className="min-w-0 flex-1">
-        <p className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">{title}</p>
-        <p className="text-2xl font-black text-slate-900 dark:text-white mt-0.5 leading-none">{value}</p>
-        {change && (
-          <div className={`flex items-center gap-1 mt-1.5 text-[11px] font-semibold ${
-            isIncrease === undefined ? 'text-slate-400' : isIncrease ? 'text-emerald-600' : 'text-red-500'
-          }`}>
-            {isIncrease !== undefined && (
-              isIncrease ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />
-            )}
-            <span>{change}</span>
+    <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between space-y-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{title}</span>
+        {Icon && (
+          <div className="p-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
+            <Icon className="w-4 h-4" />
           </div>
         )}
       </div>
+
+      <div>
+        <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{value}</h3>
+        {description && <p className="text-xs text-slate-400 mt-1">{description}</p>}
+      </div>
+
+      {change && (
+        <div className="flex items-center gap-1 text-[11px] font-bold">
+          {isIncrease ? (
+            <span className="text-emerald-600 dark:text-emerald-400 flex items-center">
+              <ArrowUpRight className="w-3.5 h-3.5" />
+              {change}
+            </span>
+          ) : (
+            <span className="text-rose-500 flex items-center">
+              <ArrowDownRight className="w-3.5 h-3.5" />
+              {change}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 };

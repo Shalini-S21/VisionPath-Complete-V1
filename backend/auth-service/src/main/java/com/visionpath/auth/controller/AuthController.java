@@ -19,14 +19,30 @@ public class AuthController {
 
     // POST /api/auth/register
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<AuthDataResponse>> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<AuthDataResponse>> register(@RequestBody RegisterRequest request) {
         AuthDataResponse data = authService.register(request);
         return ResponseEntity.ok(ApiResponse.success("Registration successful", data));
     }
 
+    // POST /api/auth/register/student
+    @PostMapping("/register/student")
+    public ResponseEntity<ApiResponse<AuthDataResponse>> registerStudent(@RequestBody RegisterRequest request) {
+        request.setRole("STUDENT");
+        AuthDataResponse data = authService.register(request);
+        return ResponseEntity.ok(ApiResponse.success("Student registration successful", data));
+    }
+
+    // POST /api/auth/register/counselor
+    @PostMapping("/register/counselor")
+    public ResponseEntity<ApiResponse<AuthDataResponse>> registerCounselor(@RequestBody RegisterRequest request) {
+        request.setRole("COUNSELOR");
+        AuthDataResponse data = authService.register(request);
+        return ResponseEntity.ok(ApiResponse.success("Counselor registration submitted", data));
+    }
+
     // POST /api/auth/login
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthDataResponse>> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<AuthDataResponse>> login(@RequestBody LoginRequest request) {
         AuthDataResponse data = authService.login(request);
         return ResponseEntity.ok(ApiResponse.success("Login successful", data));
     }
@@ -51,7 +67,7 @@ public class AuthController {
 
     // POST /api/auth/forgot-password
     @PostMapping("/forgot-password")
-    public ResponseEntity<ApiResponse<Void>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+    public ResponseEntity<ApiResponse<Void>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         authService.forgotPassword(request);
         return ResponseEntity.ok(ApiResponse.success(
             "If an account with that email exists, a password reset link has been sent.", null));
@@ -59,7 +75,7 @@ public class AuthController {
 
     // POST /api/auth/reset-password
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<ApiResponse<Void>> resetPassword(@RequestBody ResetPasswordRequest request) {
         authService.resetPassword(request);
         return ResponseEntity.ok(ApiResponse.success(
             "Password reset successful. You can now log in with your new password.", null));

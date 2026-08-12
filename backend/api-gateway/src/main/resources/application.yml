@@ -23,7 +23,6 @@ spring:
                   - "http://localhost:5174"
                   - "http://localhost:3000"
                   - "http://127.0.0.1:5173"
-                  - "http://127.0.0.1:5174"
                 allowed-methods:
                   - GET
                   - POST
@@ -41,114 +40,84 @@ spring:
           # ==============================
           routes:
 
-            # --------------------------------
-            # AUTH SERVICE - 8081
-            # --------------------------------
+            # 8081: AUTH SERVICE
             - id: auth-service
               uri: http://localhost:8081
               predicates:
                 - Path=/api/auth/**
 
-            # --------------------------------
-            # STUDENT SERVICE - 8082
-            # --------------------------------
-            - id: student-service
+            # 8082: USER SERVICE
+            - id: user-service
               uri: http://localhost:8082
+              predicates:
+                - Path=/api/users/**
+
+            # 8083: STUDENT SERVICE
+            - id: student-service
+              uri: http://localhost:8083
               predicates:
                 - Path=/api/students/**
 
-            # --------------------------------
-            # CAREER SERVICE - 8083
-            # --------------------------------
-            - id: career-service
-              uri: http://localhost:8083
-              predicates:
-                - Path=/api/careers/**
-
-            # --------------------------------
-            # EDUCATION SERVICE - 8084
-            # --------------------------------
-            - id: education-service
+            # 8084: COUNSELOR SERVICE
+            - id: counselor-service
               uri: http://localhost:8084
               predicates:
-                - Path=/api/education/**
+                - Path=/api/counselors/**
 
-            # --------------------------------
-            # JOBS SERVICE - 8085
-            # --------------------------------
-            - id: jobs-service
+            # 8085: ADMIN SERVICE
+            - id: admin-service
               uri: http://localhost:8085
               predicates:
-                - Path=/api/jobs/**
+                - Path=/api/admin/**
 
-            # --------------------------------
-            # ASSESSMENT SERVICE - 8086
-            # --------------------------------
+            # 8086: ASSESSMENT SERVICE
             - id: assessment-service
               uri: http://localhost:8086
               predicates:
                 - Path=/api/assessments/**
 
-            # --------------------------------
-            # AI MENTOR SERVICE - 8087
-            # --------------------------------
-            - id: ai-mentor-service
+            # 8087: AI SERVICE
+            - id: ai-service
               uri: http://localhost:8087
               predicates:
                 - Path=/api/ai/**
 
-            # --------------------------------
-            # STUDY PLAN SERVICE - 8088
-            # --------------------------------
-            - id: study-plan-service
+            # 8088: CAREER SERVICE
+            - id: career-service
               uri: http://localhost:8088
+              predicates:
+                - Path=/api/careers/**
+
+            # 8089: SKILL SERVICE
+            - id: skill-service
+              uri: http://localhost:8089
+              predicates:
+                - Path=/api/skills/**
+
+            # 8090: STUDY PLAN SERVICE
+            - id: study-plan-service
+              uri: http://localhost:8090
               predicates:
                 - Path=/api/study-plans/**
 
-            # --------------------------------
-            # PROGRESS SERVICE - 8089
-            # --------------------------------
-            - id: progress-service
-              uri: http://localhost:8089
-              predicates:
-                - Path=/api/progress/**
-
-            # --------------------------------
-            # COUNSELOR SERVICE - 8090
-            # --------------------------------
-            - id: counselor-service
-              uri: http://localhost:8090
-              predicates:
-                - Path=/api/counselors/**
-
-            # --------------------------------
-            # NOTIFICATION SERVICE - 8091
-            # --------------------------------
-            - id: notification-service
+            # 8091: RESUME SERVICE
+            - id: resume-service
               uri: http://localhost:8091
-              predicates:
-                - Path=/api/notifications/**
-
-            # --------------------------------
-            # ADMIN SERVICE - 8092
-            # --------------------------------
-            - id: admin-service
-              uri: http://localhost:8092
-              predicates:
-                - Path=/api/admin/**
-
-            # --------------------------------
-            # RESUME ANALYZER SERVICE - 8093
-            # --------------------------------
-            - id: resume-analyzer-service
-              uri: http://localhost:8093
               predicates:
                 - Path=/api/resumes/**
 
+            # 8092: NOTIFICATION SERVICE
+            - id: notification-service
+              uri: http://localhost:8092
+              predicates:
+                - Path=/api/notifications/**
 
-# ==========================================
-# ACTUATOR
-# ==========================================
+            # 8093: FILE SERVICE
+            - id: file-service
+              uri: http://localhost:8093
+              predicates:
+                - Path=/api/files/**
+
 management:
   endpoints:
     web:
@@ -156,7 +125,6 @@ management:
         include:
           - health
           - info
-
   endpoint:
     health:
       show-details: always

@@ -1,169 +1,122 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn, GraduationCap, UserCheck, Shield } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
-import authService from '../../services/authService';
-import Input from '../../components/ui/Input';
-import Button from '../../components/ui/Button';
+import { User, Lock, LogIn, Sparkles, GraduationCap, UserCheck, Shield } from 'lucide-react';
+import useAuth from '../../hooks/useAuth';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
 import toast from 'react-hot-toast';
 
 export const Login = () => {
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { login, loading } = useAuth();
 
-  const [email, setEmail] = useState('alex.rivera@visionpath.edu');
-  const [password, setPassword] = useState('password123');
-  const [selectedRole, setSelectedRole] = useState('student');
-  const [isLoading, setIsLoading] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleQuickPreset = (role) => {
-    setSelectedRole(role);
-    if (role === 'student') {
-      setEmail('alex.rivera@visionpath.edu');
-    } else if (role === 'counselor') {
-      setEmail('sarah.jenkins@visionpath.edu');
-    } else {
-      setEmail('marcus.admin@visionpath.edu');
-    }
+  const fillPreset = (u, p) => {
+    setUsername(u);
+    setPassword(p);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    if (!username || !password) {
+      toast.error('Please enter username and password.');
+      return;
+    }
 
-    try {
-      const response = await authService.login({ email, password });
-      const authData = response.data || response;
-      const token = authData.token || authData.jwt;
-      const user = {
-        id: authData.userId || authData.id || 1,
-        name: authData.name || email.split('@')[0],
-        email: authData.email || email,
-        role: authData.role || selectedRole,
-      };
-
-      login({ user, token });
-      toast.success(`Welcome back! Logged in as ${(user.role || 'STUDENT').toUpperCase()}`);
-
-      const targetRole = (user.role || 'student').toLowerCase();
-      if (targetRole === 'student') navigate('/student/dashboard');
-      else if (targetRole === 'counselor') navigate('/counselor/dashboard');
-      else navigate('/admin/dashboard');
-    } catch (err) {
-      console.warn('Backend connection notice:', err?.message || err);
-      // Fallback for offline demo testing if backend is unavailable
-      const fallbackUser = {
-        id: 1,
-        name: email.split('@')[0],
-        email,
-        role: selectedRole,
-      };
-      login({ user: fallbackUser, token: 'mock_jwt_token_visionpath_2026' });
-      toast.success(`Logged in as ${selectedRole.toUpperCase()}`);
-
-      if (selectedRole === 'student') navigate('/student/dashboard');
-      else if (selectedRole === 'counselor') navigate('/counselor/dashboard');
-      else navigate('/admin/dashboard');
-    } finally {
-      setIsLoading(false);
+    const res = await login(username, password);
+    if (res.success) {
+      toast.success(`Welcome back, ${res.user.name || res.user.username}!`);
+      if (res.user.role === 'counselor') {
+        navigate('/counselor/dashboard');
+      } else if (res.user.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/student/dashboard');
+      }
+    } else {
+      toast.error(res.message || 'Invalid username or password.');
     }
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back</h2>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          Sign in to access your VisionPath learning portal and dashboard
-        </p>
+      <div className="text-center space-y-1">
+        <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Sign In to VisionPath</h2>
+        <p className="text-xs text-slate-500">Access your AI-powered career roadmap & dashboard</p>
       </div>
 
-      {/* Role Preset Selector */}
-      <div className="p-3 bg-gray-50 dark:bg-slate-800/60 rounded-xl border border-gray-200/80 dark:border-slate-700">
-        <label className="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-          Demo Role Selector
-        </label>
-        <div className="grid grid-cols-3 gap-2">
+      {/* Preset Credential Buttons */}
+      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-2">
+        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block text-center">
+          Quick Demo Presets
+        </span>
+        <div className="grid grid-cols-3 gap-1.5">
           <button
             type="button"
-            onClick={() => handleQuickPreset('student')}
-            className={`py-2 px-2 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 transition-all ${
-              selectedRole === 'student'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100'
-            }`}
+            onClick={() => fillPreset('student@visionpath.com', 'password123')}
+            className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 text-xs font-bold flex flex-col items-center gap-1 transition-all"
           >
-            <GraduationCap className="w-4 h-4" /> Student
+            <GraduationCap className="w-4 h-4 text-emerald-600" />
+            <span>Student</span>
           </button>
+
           <button
             type="button"
-            onClick={() => handleQuickPreset('counselor')}
-            className={`py-2 px-2 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 transition-all ${
-              selectedRole === 'counselor'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100'
-            }`}
+            onClick={() => fillPreset('counselor@visionpath.com', 'password123')}
+            className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-purple-500 text-xs font-bold flex flex-col items-center gap-1 transition-all"
           >
-            <UserCheck className="w-4 h-4" /> Counselor
+            <UserCheck className="w-4 h-4 text-purple-600" />
+            <span>Counselor</span>
           </button>
+
           <button
             type="button"
-            onClick={() => handleQuickPreset('admin')}
-            className={`py-2 px-2 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 transition-all ${
-              selectedRole === 'admin'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100'
-            }`}
+            onClick={() => fillPreset('admin@visionpath.com', 'admin123')}
+            className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-rose-500 text-xs font-bold flex flex-col items-center gap-1 transition-all"
           >
-            <Shield className="w-4 h-4" /> Admin
+            <Shield className="w-4 h-4 text-rose-600" />
+            <span>Admin</span>
           </button>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
-          label="Email Address"
-          type="email"
-          icon={Mail}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          label="Username or Email"
+          type="text"
+          icon={User}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="e.g. student@visionpath.com"
           required
         />
 
-        <div>
-          <Input
-            label="Password"
-            type="password"
-            icon={Lock}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <div className="flex justify-end mt-1.5">
-            <Link
-              to="/forgot-password"
-              className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
-            >
-              Forgot password?
-            </Link>
-          </div>
+        <Input
+          label="Password"
+          type="password"
+          icon={Lock}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="••••••••"
+          required
+        />
+
+        <div className="flex items-center justify-between text-xs font-semibold">
+          <Link to="/forgot-password" className="text-emerald-600 hover:underline">
+            Forgot password?
+          </Link>
         </div>
 
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          className="w-full mt-2"
-          isLoading={isLoading}
-          icon={LogIn}
-        >
-          Sign In as {selectedRole.toUpperCase()}
+        <Button type="submit" variant="primary" size="md" className="w-full" isLoading={loading} icon={LogIn}>
+          Sign In
         </Button>
       </form>
 
-      <div className="text-center text-xs text-gray-500 dark:text-gray-400">
+      <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100 dark:border-slate-800">
         Don't have an account?{' '}
-        <Link to="/register" className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
+        <Link to="/register" className="font-bold text-emerald-600 hover:underline">
           Create Account
         </Link>
       </div>

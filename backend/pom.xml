@@ -28,18 +28,18 @@
     <modules>
         <module>api-gateway</module>
         <module>auth-service</module>
+        <module>user-service</module>
         <module>student-service</module>
-        <module>career-service</module>
-        <module>education-service</module>
-        <module>jobs-service</module>
-        <module>assessment-service</module>
-        <module>ai-mentor-service</module>
-        <module>study-plan-service</module>
-        <module>progress-service</module>
         <module>counselor-service</module>
-        <module>notification-service</module>
         <module>admin-service</module>
-        <module>resume-analyzer-service</module>
+        <module>assessment-service</module>
+        <module>ai-service</module>
+        <module>career-service</module>
+        <module>skill-service</module>
+        <module>study-plan-service</module>
+        <module>resume-service</module>
+        <module>notification-service</module>
+        <module>file-service</module>
     </modules>
 
     <dependencyManagement>
@@ -52,9 +52,9 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>42.7.4</version>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>9.1.0</version>
             </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>

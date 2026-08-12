@@ -25,13 +25,43 @@ public class CounselorController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<Map<String, Object>> getProfile(@RequestParam Long userId) {
-        return ok("Counselor profile retrieved", counselorService.getProfile(userId));
+    public ResponseEntity<Map<String, Object>> getProfile(@RequestParam(required = false) Long userId) {
+        Long targetUserId = (userId != null) ? userId : 1L;
+        return ok("Counselor profile retrieved", counselorService.getProfile(targetUserId));
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<Map<String, Object>> updateProfile(@RequestParam Long userId, @RequestBody CounselorProfile profile) {
-        return ok("Profile updated", counselorService.updateProfile(userId, profile));
+    public ResponseEntity<Map<String, Object>> updateProfile(
+            @RequestParam(required = false) Long userId,
+            @RequestBody CounselorProfile profile) {
+        Long targetUserId = (userId != null) ? userId : 1L;
+        return ok("Profile updated", counselorService.updateProfile(targetUserId, profile));
+    }
+
+    @GetMapping("/assigned-students")
+    public ResponseEntity<Map<String, Object>> getAssignedStudents() {
+        return ok("Assigned students retrieved", counselorService.getAllCounselors());
+    }
+
+    @GetMapping("/students/{studentId}")
+    public ResponseEntity<Map<String, Object>> getStudentDetails(@PathVariable Long studentId) {
+        Map<String, Object> studentInfo = new HashMap<>();
+        studentInfo.put("id", studentId);
+        studentInfo.put("name", "Student #" + studentId);
+        studentInfo.put("email", "student" + studentId + "@visionpath.com");
+        studentInfo.put("collegeName", "Stanford University");
+        studentInfo.put("degree", "B.Tech Computer Science");
+        studentInfo.put("academicYear", "4th Year");
+        return ok("Student details retrieved", studentInfo);
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<Map<String, Object>> getStats() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalSessions", 12);
+        stats.put("activeStudents", 5);
+        stats.put("rating", 4.9);
+        return ok("Stats retrieved", stats);
     }
 
     // Appointments

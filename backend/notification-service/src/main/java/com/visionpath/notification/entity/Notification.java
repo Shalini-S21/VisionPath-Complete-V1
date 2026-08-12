@@ -20,12 +20,27 @@ public class Notification {
     private String message;
 
     private String type; // SYSTEM, APPOINTMENT, JOB, SYSTEM_ALERT
+
+    @Column(name = "is_read")
     private boolean read = false;
+
     private LocalDateTime createdAt;
+
+    public Notification() {}
+
+    public Notification(Long userId, String title, String message, String type) {
+        this.userId = userId;
+        this.title = title;
+        this.message = message;
+        this.type = type;
+        this.read = false;
+    }
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 
     public Long getId() { return id; }

@@ -1,54 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import {
-  Compass,
-  BookOpen,
-  Award,
-  Calendar,
-  ArrowRight,
-  Sparkles,
-  TrendingUp,
-  Map,
-  CheckCircle2,
-  FileCheck,
-  Video
-} from 'lucide-react';
-import progressService from '../../services/progressService';
+import { Compass, BookOpen, Award, Sparkles, Map, CheckCircle2, FileCheck, Loader2 } from 'lucide-react';
 import StatCard from '../../components/cards/StatCard';
-import { AreaChartWidget, BarChartWidget } from '../../components/charts/ChartWidgets';
-import Button from '../../components/ui/Button';
+import Button from '../../components/common/Button';
+import useAuth from '../../hooks/useAuth';
+import studentService from '../../services/student/studentService';
+import skillService from '../../services/skill/skillService';
+import studyPlanService from '../../services/studyPlan/studyPlanService';
+import assessmentService from '../../services/assessment/assessmentService';
+import resumeService from '../../services/resume/resumeService';
 
 export const Dashboard = () => {
-  const { user } = useSelector((state) => state.auth);
-  const { activeRoadmap, enrolledCourses, assessments, resumeData } = useSelector((state) => state.student);
-  const [progressData, setProgressData] = React.useState(null);
+  const { user } = useAuth();
 
-  React.useEffect(() => {
-    const fetchProgress = async () => {
-      if (!user?.id) return;
+  const [studentProfile, setStudentProfile] = useState(null);
+  const [skills, setSkills] = useState([]);
+  const [studyPlanProgress, setStudyPlanProgress] = useState(null);
+  const [assessmentResults, setAssessmentResults] = useState([]);
+  const [resumes, setResumes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStudentDashboard = async () => {
+      setLoading(true);
       try {
-        const res = await progressService.getProgress(user.id);
-        const data = res.data || res;
-        if (data) {
-          setProgressData(data);
-        }
+        const studentId = user?.id || 1;
+        const [profileRes, skillsRes, progressRes, resultsRes, resumesRes] = await Promise.all([
+          studentService.getProfile().catch(() => ({ data: null })),
+          skillService.getStudentSkills(studentId).catch(() => ({ data: [] })),
+          studyPlanService.getStudentProgress(studentId).catch(() => ({ data: null })),
+          assessmentService.getResults(studentId).catch(() => ({ data: [] })),
+          resumeService.getStudentResumes(studentId).catch(() => ({ data: [] })),
+        ]);
+
+        setStudentProfile(profileRes.data?.data || profileRes.data);
+        setSkills(Array.isArray(skillsRes.data?.data) ? skillsRes.data.data : Array.isArray(skillsRes.data) ? skillsRes.data : []);
+        setStudyPlanProgress(progressRes.data?.data || progressRes.data);
+        setAssessmentResults(Array.isArray(resultsRes.data?.data) ? resultsRes.data.data : Array.isArray(resultsRes.data) ? resultsRes.data : []);
+        setResumes(Array.isArray(resumesRes.data?.data) ? resumesRes.data.data : Array.isArray(resumesRes.data) ? resumesRes.data : []);
       } catch (err) {
-        console.warn('Backend getProgress notice:', err?.message || err);
+        console.error('Failed to load student dashboard:', err);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchProgress();
+
+    fetchStudentDashboard();
   }, [user]);
 
-  const learningActivityData = [
-    { name: 'Mon', value: 2.5 },
-    { name: 'Tue', value: 4.0 },
-    { name: 'Wed', value: 1.5 },
-    { name: 'Thu', value: 5.0 },
-    { name: 'Fri', value: 3.5 },
-    { name: 'Sat', value: 6.0 },
-    { name: 'Sun', value: 4.2 },
-  ];
+  const latestResume = resumes.length > 0 ? resumes[0] : null;
 
   return (
     <div className="space-y-8">
@@ -57,137 +57,115 @@ export const Dashboard = () => {
         <div className="space-y-2 max-w-xl z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold backdrop-blur-sm border border-emerald-400/20">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Target Role: {resumeData.targetRole}</span>
+            <span>Target Role: {latestResume?.targetRole || 'Full Stack AI Engineer'}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-            Welcome back, {user?.name?.split(' ')[0]}! 👋
+            Welcome back, {studentProfile?.name || user?.name || 'Student'}! 👋
           </h1>
           <p className="text-xs sm:text-sm text-emerald-100">
-            You are on track! Complete your next module in <span className="font-bold underline">{activeRoadmap.title}</span> to reach 75% completion.
+            {studentProfile?.schoolName || studentProfile?.collegeName
+              ? `Enrolled at ${studentProfile.schoolName || studentProfile.collegeName}`
+              : 'Your AI-powered career roadmap is active.'}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 z-10">
           <Link to="/student/career-roadmap">
             <Button variant="primary" size="md" icon={Map} className="bg-white text-emerald-950 hover:bg-emerald-50 font-bold">
-              View Roadmap
+              View Study Plan
             </Button>
           </Link>
           <Link to="/student/ai-career-assistant">
             <Button variant="outline" size="md" icon={Sparkles} className="border-emerald-300 text-emerald-100 hover:bg-emerald-800/40">
-              Ask AI Assistant
+              Ask AI Mentor
             </Button>
           </Link>
         </div>
       </div>
 
-      {/* Statistics Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <StatCard
-          title="Active Roadmap Progress"
-          value={`${activeRoadmap.completionRate}%`}
-          change="+12%"
-          isIncrease={true}
-          icon={Map}
-          description={`${activeRoadmap.completedModules} of ${activeRoadmap.totalModules} modules finished`}
-        />
-        <StatCard
-          title="Enrolled Courses"
-          value={enrolledCourses.length}
-          change="+2 new"
-          isIncrease={true}
-          icon={BookOpen}
-          description="3 in-progress courses"
-        />
-        <StatCard
-          title="ATS Resume Score"
-          value={`${resumeData.atsScore}/100`}
-          change="Strong"
-          isIncrease={true}
-          icon={FileCheck}
-          description={`Targeting ${resumeData.targetRole}`}
-        />
-        <StatCard
-          title="Assessments Passed"
-          value={assessments.length}
-          change="91% Avg"
-          isIncrease={true}
-          icon={Award}
-          description="Top percentile in React Architecture"
-        />
-      </div>
-
-      {/* Middle Section: Active Roadmap & Learning Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Active Roadmap Progress */}
-        <div className="lg:col-span-7 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 shadow-xs space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Compass className="w-5 h-5 text-emerald-600" />
-                Active Learning Roadmap
-              </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{activeRoadmap.title}</p>
-            </div>
-            <Link to="/student/career-roadmap" className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
-              Full Roadmap &rarr;
-            </Link>
+      {loading ? (
+        <div className="p-12 flex flex-col items-center justify-center text-slate-400 gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+          <p className="text-sm font-semibold">Fetching your live dashboard data from API Gateway...</p>
+        </div>
+      ) : (
+        <>
+          {/* Statistics Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <StatCard
+              title="Acquired Skills"
+              value={skills.length}
+              change={`${skills.length} tracked`}
+              isIncrease={true}
+              icon={Compass}
+              description="Proficiencies recorded in skill-service"
+            />
+            <StatCard
+              title="Assessments Taken"
+              value={assessmentResults.length}
+              change="Verified"
+              isIncrease={true}
+              icon={Award}
+              description="Evaluated by assessment-service"
+            />
+            <StatCard
+              title="ATS Resume Score"
+              value={latestResume?.atsScore ? `${latestResume.atsScore}/100` : 'Not Evaluated'}
+              change={latestResume ? 'Evaluated' : 'Upload Resume'}
+              isIncrease={true}
+              icon={FileCheck}
+              description={latestResume ? latestResume.filename : 'Upload to calculate score'}
+            />
+            <StatCard
+              title="Study Plan Tasks"
+              value={studyPlanProgress?.completedTasks || 0}
+              change="Completed"
+              isIncrease={true}
+              icon={BookOpen}
+              description="Tasks completed in study-plan-service"
+            />
           </div>
 
-          {/* Progress Bar */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-semibold">
-              <span className="text-gray-700 dark:text-gray-300">Overall Completion</span>
-              <span className="text-emerald-600 dark:text-emerald-400">{activeRoadmap.completionRate}%</span>
-            </div>
-            <div className="w-full bg-gray-100 dark:bg-slate-800 rounded-full h-3">
-              <div
-                className="bg-emerald-600 h-3 rounded-full transition-all duration-500 shadow-sm"
-                style={{ width: `${activeRoadmap.completionRate}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Timeline Milestones list */}
-          <div className="space-y-3 pt-2">
-            {activeRoadmap.steps.slice(0, 4).map((step) => (
-              <div
-                key={step.id}
-                className="p-3.5 rounded-2xl bg-gray-50/80 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 flex items-center justify-between gap-3 text-xs"
-              >
-                <div className="flex items-center gap-3">
-                  <CheckCircle2
-                    className={`w-4 h-4 ${
-                      step.status === 'completed'
-                        ? 'text-emerald-600 dark:text-emerald-400'
-                        : step.status === 'in-progress'
-                        ? 'text-amber-500 animate-pulse'
-                        : 'text-gray-300 dark:text-slate-700'
-                    }`}
-                  />
-                  <span className="font-semibold text-gray-800 dark:text-gray-200">{step.title}</span>
-                </div>
-                <span className="text-[10px] font-semibold text-gray-400 bg-white dark:bg-slate-900 px-2 py-0.5 rounded-lg border border-gray-100 dark:border-slate-800">
-                  {step.duration}
-                </span>
+          {/* Skills Portfolio Table */}
+          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Compass className="w-5 h-5 text-emerald-600" />
+                  My Skills Portfolio
+                </h2>
+                <p className="text-xs text-slate-500">Retrieved from skill-service</p>
               </div>
-            ))}
-          </div>
-        </div>
+              <Link to="/student/skills" className="text-xs font-bold text-emerald-600 hover:underline">
+                Manage Skills &rarr;
+              </Link>
+            </div>
 
-        {/* Weekly Study Activity Chart */}
-        <div className="lg:col-span-5 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 shadow-xs space-y-4">
-          <div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-emerald-600" />
-              Weekly Study Hours
-            </h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">26.7 hours completed this week</p>
+            {skills.length === 0 ? (
+              <div className="p-8 text-center text-xs text-slate-400 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                No skills registered yet. Click 'Manage Skills' to build your matrix!
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {skills.slice(0, 6).map((sk) => (
+                  <div
+                    key={sk.id}
+                    className="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 text-xs"
+                  >
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{sk.skillName || sk.name}</span>
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-900">
+                      {sk.proficiencyLevel || 'INTERMEDIATE'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-
-          <AreaChartWidget data={learningActivityData} height={240} />
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };

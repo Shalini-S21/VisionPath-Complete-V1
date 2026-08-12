@@ -72,7 +72,7 @@ public class AuthService {
         }
 
         User user = new User(
-            request.getName(),
+            request.getName() != null ? request.getName() : "New User",
             request.getEmail(),
             passwordEncoder.encode(request.getPassword()),
             request.getPhone(),
@@ -85,8 +85,16 @@ public class AuthService {
     }
 
     public AuthDataResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+        String identifier = request.getEmail();
+        if (identifier == null || identifier.isBlank()) {
+            throw new RuntimeException("Email or username is required");
+        }
+
+        User user = userRepository.findByEmail(identifier)
+                .orElseGet(() -> userRepository.findAll().stream()
+                        .filter(u -> u.getEmail().equalsIgnoreCase(identifier) || u.getEmail().startsWith(identifier.toLowerCase()))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Invalid email or password")));
 
         if (!user.isEnabled()) {
             throw new RuntimeException("Account is disabled. Please contact admin.");
@@ -178,7 +186,7 @@ public class AuthService {
             req.put("title", title);
             req.put("message", message);
             req.put("type", "SECURITY");
-            restTemplate.postForObject("http://localhost:8091/api/notifications", req, String.class);
+            restTemplate.postForObject("http://localhost:8092/api/notifications", req, String.class);
         } catch (Exception e) {
             log.warn("Notification delivery warning: {}", e.getMessage());
         }
