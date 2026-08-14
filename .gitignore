@@ -45,3 +45,5 @@ bin/
 .env
 .env.*
 !.env.example
+# Maven build output
+**/target/
