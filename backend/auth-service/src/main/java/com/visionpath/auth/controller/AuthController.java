@@ -6,6 +6,7 @@ import com.visionpath.auth.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,6 +23,13 @@ public class AuthController {
     public ResponseEntity<ApiResponse<AuthDataResponse>> register(@RequestBody RegisterRequest request) {
         AuthDataResponse data = authService.register(request);
         return ResponseEntity.ok(ApiResponse.success("Registration successful", data));
+    }
+
+    // GET /api/auth/users
+    @GetMapping("/users")
+    public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {
+        List<User> users = authService.getAllUsers();
+        return ResponseEntity.ok(ApiResponse.success("All users retrieved successfully", users));
     }
 
     // POST /api/auth/register/student

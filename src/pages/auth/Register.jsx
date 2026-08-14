@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Building, GraduationCap, UserCheck, ShieldAlert } from 'lucide-react';
+import { User, Mail, Lock, Building, GraduationCap, UserCheck, ShieldAlert, Clock, Linkedin } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -27,6 +27,8 @@ export const Register = () => {
   // Counselor specific
   const [institution, setInstitution] = useState('');
   const [qualification, setQualification] = useState('M.Sc. Career Counseling');
+  const [experienceYears, setExperienceYears] = useState('');
+  const [linkedinProfile, setLinkedinProfile] = useState('');
   const [counselorNotice, setCounselorNotice] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -61,6 +63,8 @@ export const Register = () => {
         password,
         institution,
         qualification,
+        experienceYears: experienceYears ? parseInt(experienceYears) : null,
+        linkedinProfile,
       };
 
       const res = await registerCounselor(payload);
@@ -178,6 +182,8 @@ export const Register = () => {
               <>
                 <Input label="Institution / Organization" type="text" icon={Building} value={institution} onChange={(e) => setInstitution(e.target.value)} placeholder="National Counseling Bureau" required />
                 <Input label="Professional Qualification" type="text" value={qualification} onChange={(e) => setQualification(e.target.value)} placeholder="M.Sc. Counseling Psychology" required />
+                <Input label="Years of Experience" type="number" icon={Clock} value={experienceYears} onChange={(e) => setExperienceYears(e.target.value)} placeholder="e.g. 5" required />
+                <Input label="LinkedIn Profile URL" type="url" icon={Linkedin} value={linkedinProfile} onChange={(e) => setLinkedinProfile(e.target.value)} placeholder="https://linkedin.com/in/username" />
               </>
             )}
 

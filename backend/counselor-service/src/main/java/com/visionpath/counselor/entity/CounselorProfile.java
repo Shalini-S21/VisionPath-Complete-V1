@@ -27,6 +27,7 @@ public class CounselorProfile {
     private String contactPhone;
     private String institution;
     private String qualification;
+    private String linkedinProfile;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -54,5 +55,7 @@ public class CounselorProfile {
     public void setInstitution(String institution) { this.institution = institution; }
     public String getQualification() { return qualification; }
     public void setQualification(String qualification) { this.qualification = qualification; }
+    public String getLinkedinProfile() { return linkedinProfile; }
+    public void setLinkedinProfile(String linkedinProfile) { this.linkedinProfile = linkedinProfile; }
 }
 

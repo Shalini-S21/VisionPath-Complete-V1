@@ -5,11 +5,11 @@ import com.visionpath.user.dto.UserProfileDto;
 import com.visionpath.user.entity.UserProfile;
 import com.visionpath.user.exception.ResourceNotFoundException;
 import com.visionpath.user.repository.UserProfileRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
-
 @Service
 public class UserService {
 
@@ -17,6 +17,27 @@ public class UserService {
 
     public UserService(UserProfileRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @PostConstruct
+    public void seedDefaultUsers() {
+        createIfAbsent(1L, "admin", "Admin User", "admin@visionpath.com", "ADMIN", "ACTIVE", "Platform Administrator");
+        createIfAbsent(2L, "student", "John Student", "student@visionpath.com", "STUDENT", "ACTIVE", "Computer Science Undergraduate Student");
+        createIfAbsent(3L, "counselor", "Dr. Sarah Counselor", "counselor@visionpath.com", "COUNSELOR", "ACTIVE", "Senior Career Advisor & Industry Mentor");
+    }
+
+    private void createIfAbsent(Long userId, String username, String name, String email, String role, String status, String bio) {
+        if (userRepository.findByEmail(email).isEmpty()) {
+            userRepository.save(UserProfile.builder()
+                    .userId(userId)
+                    .username(username)
+                    .name(name)
+                    .email(email)
+                    .role(role)
+                    .status(status)
+                    .bio(bio)
+                    .build());
+        }
     }
 
     @Transactional(readOnly = true)

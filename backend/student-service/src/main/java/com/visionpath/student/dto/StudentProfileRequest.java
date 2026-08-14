@@ -26,6 +26,7 @@ public class StudentProfileRequest {
     private String careerGoals;
     private String location;
     private String resumeUrl;
+    private String counselorEmail;
 
     public String getName() { return name; }
     public void setName(String name) { 
@@ -81,5 +82,8 @@ public class StudentProfileRequest {
 
     public String getResumeUrl() { return resumeUrl; }
     public void setResumeUrl(String resumeUrl) { this.resumeUrl = resumeUrl; }
+
+    public String getCounselorEmail() { return counselorEmail; }
+    public void setCounselorEmail(String counselorEmail) { this.counselorEmail = counselorEmail; }
 }
 

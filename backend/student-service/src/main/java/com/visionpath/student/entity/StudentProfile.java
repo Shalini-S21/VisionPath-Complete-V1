@@ -24,6 +24,7 @@ public class StudentProfile {
     private String careerGoals;
     private String location;
     private String resumeUrl;
+    private String counselorEmail;
     private Integer profileCompletion = 0;
 
     // Getters and Setters
@@ -68,4 +69,7 @@ public class StudentProfile {
 
     public Integer getProfileCompletion() { return profileCompletion; }
     public void setProfileCompletion(Integer profileCompletion) { this.profileCompletion = profileCompletion; }
+
+    public String getCounselorEmail() { return counselorEmail; }
+    public void setCounselorEmail(String counselorEmail) { this.counselorEmail = counselorEmail; }
 }

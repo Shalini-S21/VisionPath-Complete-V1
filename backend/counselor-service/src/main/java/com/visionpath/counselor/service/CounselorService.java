@@ -67,6 +67,7 @@ public class CounselorService {
         if (updated.getContactPhone() != null) cp.setContactPhone(updated.getContactPhone());
         if (updated.getInstitution() != null) cp.setInstitution(updated.getInstitution());
         if (updated.getQualification() != null) cp.setQualification(updated.getQualification());
+        if (updated.getLinkedinProfile() != null) cp.setLinkedinProfile(updated.getLinkedinProfile());
         return profileRepository.save(cp);
     }
 

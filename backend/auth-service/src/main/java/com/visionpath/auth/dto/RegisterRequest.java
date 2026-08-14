@@ -1,5 +1,6 @@
 package com.visionpath.auth.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,6 +22,15 @@ public class RegisterRequest {
 
     private String role; // STUDENT, COUNSELOR, ADMIN
 
+    private String institution;
+    private String qualification;
+
+    @JsonAlias({"yearsOfExperience", "experience"})
+    private Integer experienceYears;
+
+    @JsonAlias({"linkedin", "linkedinUrl"})
+    private String linkedinProfile;
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -35,4 +45,16 @@ public class RegisterRequest {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    public String getInstitution() { return institution; }
+    public void setInstitution(String institution) { this.institution = institution; }
+
+    public String getQualification() { return qualification; }
+    public void setQualification(String qualification) { this.qualification = qualification; }
+
+    public Integer getExperienceYears() { return experienceYears; }
+    public void setExperienceYears(Integer experienceYears) { this.experienceYears = experienceYears; }
+
+    public String getLinkedinProfile() { return linkedinProfile; }
+    public void setLinkedinProfile(String linkedinProfile) { this.linkedinProfile = linkedinProfile; }
 }

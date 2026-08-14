@@ -20,6 +20,9 @@ public class AdminService {
     @Value("${user.service.url:http://localhost:8082}")
     private String userServiceUrl;
     
+    @Value("${auth.service.url:http://localhost:8081}")
+    private String authServiceUrl;
+
     @Value("${counselor.service.url:http://localhost:8084}")
     private String counselorServiceUrl;
 
@@ -40,31 +43,60 @@ public class AdminService {
 
     public Object getUsers() {
         try {
-            ResponseEntity<Map> response = restTemplate.getForEntity(userServiceUrl + "/api/users/all", Map.class);
-            return response.getBody();
+            ResponseEntity<Map> response = restTemplate.getForEntity(authServiceUrl + "/api/auth/users", Map.class);
+            Map body = response.getBody();
+            if (body != null && body.containsKey("data")) {
+                Object dataObj = body.get("data");
+                if (dataObj != null) {
+                    return dataObj;
+                }
+            }
+            if (body != null) {
+                return body;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            System.err.println("Failed to fetch users from auth-service: " + e.getMessage());
         }
+        return new ArrayList<>();
     }
 
     public Object getStudents() {
-        // Just return all users for now, frontend might filter, or we can filter here
-        return getUsers();
+        Object all = getUsers();
+        if (all instanceof List) {
+            List<Map<String, Object>> students = new ArrayList<>();
+            for (Object item : (List<?>) all) {
+                if (item instanceof Map) {
+                    Map<String, Object> u = (Map<String, Object>) item;
+                    if ("STUDENT".equalsIgnoreCase(String.valueOf(u.get("role")))) {
+                        students.add(u);
+                    }
+                }
+            }
+            return students;
+        }
+        return new ArrayList<>();
     }
 
     public Object getCounselors() {
         try {
             ResponseEntity<Map> response = restTemplate.getForEntity(counselorServiceUrl + "/api/counselors", Map.class);
-            return response.getBody();
+            Map body = response.getBody();
+            if (body != null && body.containsKey("data")) {
+                Object dataObj = body.get("data");
+                if (dataObj != null) {
+                    return dataObj;
+                }
+            }
+            if (body != null) {
+                return body;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            System.err.println("Failed to fetch counselors from counselor-service: " + e.getMessage());
         }
+        return new ArrayList<>();
     }
 
     public Object getPendingCounselors() {
-        // Mock pending counselors since counselor-service doesn't have a pending endpoint
         return new ArrayList<>();
     }
 

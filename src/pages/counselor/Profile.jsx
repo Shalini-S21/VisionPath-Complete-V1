@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserCheck, Mail, Building, Save, ShieldCheck, Briefcase, Award, Phone, AlignLeft, Clock } from 'lucide-react';
+import { UserCheck, Mail, Building, Save, ShieldCheck, Briefcase, Award, Phone, AlignLeft, Clock, Linkedin } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import counselorService from '../../services/counselor/counselorService';
 import Input from '../../components/common/Input';
@@ -17,6 +17,7 @@ export const Profile = () => {
   const [institution, setInstitution] = useState('');
   const [qualification, setQualification] = useState('');
   const [experienceYears, setExperienceYears] = useState('10');
+  const [linkedinProfile, setLinkedinProfile] = useState('');
   const [bio, setBio] = useState('');
   const [status, setStatus] = useState('APPROVED');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,6 +37,7 @@ export const Profile = () => {
           if (data.institution) setInstitution(data.institution);
           if (data.qualification) setQualification(data.qualification);
           if (data.experienceYears !== undefined && data.experienceYears !== null) setExperienceYears(String(data.experienceYears));
+          if (data.linkedinProfile) setLinkedinProfile(data.linkedinProfile);
           if (data.bio) setBio(data.bio);
           if (data.status) setStatus(data.status);
         }
@@ -60,6 +62,7 @@ export const Profile = () => {
         institution,
         qualification,
         experienceYears: experienceYears ? parseInt(experienceYears) : null,
+        linkedinProfile,
         bio,
       };
 
@@ -105,6 +108,10 @@ export const Profile = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Specialization Areas" type="text" icon={ShieldCheck} value={specialization} onChange={(e) => setSpecialization(e.target.value)} placeholder="Tech Careers, AI & Data Science" />
             <Input label="Years of Experience" type="number" icon={Clock} value={experienceYears} onChange={(e) => setExperienceYears(e.target.value)} placeholder="10" />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            <Input label="LinkedIn Profile URL" type="url" icon={Linkedin} value={linkedinProfile} onChange={(e) => setLinkedinProfile(e.target.value)} placeholder="https://linkedin.com/in/counselor" />
           </div>
 
           <div className="space-y-1.5">

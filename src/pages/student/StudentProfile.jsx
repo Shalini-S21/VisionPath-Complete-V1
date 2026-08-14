@@ -23,6 +23,7 @@ export const StudentProfile = () => {
   const [cgpa, setCgpa] = useState('');
   const [careerGoals, setCareerGoals] = useState('');
   const [location, setLocation] = useState('');
+  const [counselorEmail, setCounselorEmail] = useState('');
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,6 +59,7 @@ export const StudentProfile = () => {
           if (data.cgpa !== undefined && data.cgpa !== null) setCgpa(String(data.cgpa));
           if (data.careerGoals) setCareerGoals(data.careerGoals);
           if (data.location) setLocation(data.location);
+          if (data.counselorEmail) setCounselorEmail(data.counselorEmail);
         }
       } catch (err) {
         console.error('Failed to load student profile:', err);
@@ -96,6 +98,7 @@ export const StudentProfile = () => {
         cgpa: cgpa ? parseFloat(cgpa) : null,
         careerGoals,
         location,
+        counselorEmail,
       };
 
       await studentService.updateProfile(payload);
@@ -134,6 +137,10 @@ export const StudentProfile = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input label="Email Address" type="email" icon={Mail} value={email} onChange={(e) => setEmail(e.target.value)} required />
               <Input label="Current Location" type="text" icon={MapPin} value={location} onChange={(e) => setLocation(e.target.value)} placeholder="San Francisco, CA" />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              <Input label="Counselor Email" type="email" icon={Mail} value={counselorEmail} onChange={(e) => setCounselorEmail(e.target.value)} placeholder="counselor@visionpath.com" />
             </div>
 
             <div>

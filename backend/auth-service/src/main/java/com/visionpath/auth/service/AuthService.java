@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.web.client.RestTemplate;
@@ -80,6 +81,23 @@ public class AuthService {
         );
         user = userRepository.save(user);
 
+        if (role == Role.COUNSELOR) {
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                Map<String, Object> req = new HashMap<>();
+                req.put("name", user.getName());
+                req.put("contactEmail", user.getEmail());
+                req.put("contactPhone", user.getPhone());
+                req.put("institution", request.getInstitution());
+                req.put("qualification", request.getQualification());
+                req.put("experienceYears", request.getExperienceYears());
+                req.put("linkedinProfile", request.getLinkedinProfile());
+                restTemplate.put("http://localhost:8084/api/counselors/profile?userId=" + user.getId(), req);
+            } catch (Exception e) {
+                log.warn("Counselor profile sync warning: {}", e.getMessage());
+            }
+        }
+
         String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRole().name(), user.getId());
         return buildResponse(token, user);
     }
@@ -114,6 +132,12 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setPassword(null); // Never return password
         return user;
+    }
+
+    public List<User> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        users.forEach(u -> u.setPassword(null));
+        return users;
     }
 
     public void changePassword(String token, ChangePasswordRequest request) {

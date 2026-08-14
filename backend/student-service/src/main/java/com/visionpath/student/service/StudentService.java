@@ -56,6 +56,7 @@ public class StudentService {
         if (request.getCareerGoals() != null) profile.setCareerGoals(request.getCareerGoals());
         if (request.getLocation() != null) profile.setLocation(request.getLocation());
         if (request.getResumeUrl() != null) profile.setResumeUrl(request.getResumeUrl());
+        if (request.getCounselorEmail() != null) profile.setCounselorEmail(request.getCounselorEmail());
 
         profile.setProfileCompletion(calculateCompletion(profile));
         return profileRepository.save(profile);
