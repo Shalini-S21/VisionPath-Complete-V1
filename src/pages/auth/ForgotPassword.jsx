@@ -28,16 +28,16 @@ export const ForgotPassword = () => {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Forgot Password</h2>
-        <p className="text-xs text-slate-500">Enter your email to receive a password reset link</p>
+        <h2 className="text-2xl font-black text-slate-900 dark:text-[#F3F4F6] tracking-tight">Forgot Password</h2>
+        <p className="text-xs text-slate-500 dark:text-slate-400">Enter your email to receive a password reset link</p>
       </div>
 
       {sent ? (
-        <div className="p-6 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-center space-y-3">
+        <div className="p-6 rounded-2xl bg-emerald-50 dark:bg-[#151E18] border border-emerald-200 dark:border-[#1F3327] text-center space-y-3">
           <p className="text-xs text-emerald-800 dark:text-emerald-300 font-semibold">
             We have dispatched password recovery instructions to <span className="font-bold">{email}</span>.
           </p>
-          <Link to="/login" className="inline-block text-xs font-bold text-emerald-600 hover:underline">
+          <Link to="/login" className="inline-block text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
             Return to Sign In
           </Link>
         </div>
@@ -51,7 +51,7 @@ export const ForgotPassword = () => {
       )}
 
       <div className="text-center pt-2">
-        <Link to="/login" className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white">
+        <Link to="/login" className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-[#F3F4F6]">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Sign In
         </Link>
       </div>

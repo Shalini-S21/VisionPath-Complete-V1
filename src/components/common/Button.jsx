@@ -15,10 +15,11 @@ export const Button = ({
   
   const variants = {
     primary: 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-600/20 active:scale-[0.98]',
-    secondary: 'bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900 shadow-sm active:scale-[0.98]',
-    outline: 'border border-slate-200 dark:border-slate-800 bg-transparent text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800',
-    ghost: 'bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800',
+    secondary: 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-[#151E18] dark:text-emerald-400 dark:hover:bg-[#1F3327] border border-transparent dark:border-[#1F3327]',
+    outline: 'border border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-500 dark:hover:bg-emerald-950/40',
+    ghost: 'bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#151E18]',
     danger: 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm shadow-rose-600/20 active:scale-[0.98]',
+    white: 'bg-white hover:bg-slate-50 text-emerald-950 font-extrabold shadow-sm shadow-black/10 active:scale-[0.98]',
   };
 
   const sizes = {

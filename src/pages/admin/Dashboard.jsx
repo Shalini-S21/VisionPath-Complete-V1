@@ -43,7 +43,7 @@ export const Dashboard = () => {
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#14532D] via-emerald-800 to-slate-900 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-emerald-800 via-emerald-700 to-slate-900 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
         <div className="space-y-2 max-w-xl z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold backdrop-blur-sm border border-emerald-400/20">
             <Shield className="w-3.5 h-3.5" />
@@ -53,13 +53,13 @@ export const Dashboard = () => {
             System Control Center ⚙️
           </h1>
           <p className="text-xs sm:text-sm text-emerald-100">
-            Platform running smoothly. Connected to API Gateway & 14 microservice backend databases.
+            Platform running smoothly. Connected to API Gateway & microservice backend databases.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 z-10">
           <Link to="/admin/counselors">
-            <Button variant="primary" size="md" icon={UserCheck} className="bg-white text-emerald-950 hover:bg-emerald-50 font-bold">
+            <Button variant="white" size="md" icon={UserCheck} className="!font-bold">
               Review Pending Counselors ({pendingCounselors.length})
             </Button>
           </Link>
@@ -68,7 +68,7 @@ export const Dashboard = () => {
 
       {loading ? (
         <div className="p-12 flex flex-col items-center justify-center text-slate-400 gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-600 dark:text-emerald-400" />
           <p className="text-sm font-semibold">Loading real-time admin metrics...</p>
         </div>
       ) : (
@@ -113,28 +113,28 @@ export const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Link
               to="/admin/counselors"
-              className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-all flex items-center justify-between group"
+              className="p-6 rounded-3xl bg-white dark:bg-[#111814] border border-slate-200 dark:border-[#1F3327] hover:border-emerald-500 transition-all flex items-center justify-between group"
             >
               <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-[#F3F4F6] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                   Counselor Verification ({pendingCounselors.length} Pending)
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">Approve or reject counselor accreditation applications</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Approve or reject counselor accreditation applications</p>
               </div>
-              <ArrowRight className="w-5 h-5 text-emerald-600 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" />
             </Link>
 
             <Link
               to="/admin/users"
-              className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-all flex items-center justify-between group"
+              className="p-6 rounded-3xl bg-white dark:bg-[#111814] border border-slate-200 dark:border-[#1F3327] hover:border-emerald-500 transition-all flex items-center justify-between group"
             >
               <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-[#F3F4F6] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                   User Management Directory
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">Manage accounts across Student, Counselor, and Admin roles</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Manage accounts across Student, Counselor, and Admin roles</p>
               </div>
-              <ArrowRight className="w-5 h-5 text-emerald-600 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </>

@@ -23,13 +23,42 @@ public class StudyPlanService {
         return planRepository.findByUserId(userId);
     }
 
+    public java.util.Map<String, Object> getStudentProgress(Long userId) {
+        List<StudyPlan> plans = planRepository.findByUserId(userId);
+        int totalTasks = 0;
+        int completedTasks = 0;
+
+        for(StudyPlan p : plans) {
+            List<StudyTask> tasks = taskRepository.findByStudyPlanId(p.getId());
+            totalTasks += tasks.size();
+            completedTasks += (int) tasks.stream().filter(StudyTask::isCompleted).count();
+        }
+
+        java.util.Map<String, Object> progress = new java.util.HashMap<>();
+        progress.put("totalTasks", totalTasks);
+        progress.put("completedTasks", completedTasks);
+        progress.put("overallProgress", totalTasks == 0 ? 0 : (completedTasks * 100) / totalTasks);
+        return progress;
+    }
+
     public StudyPlan getPlanById(Long id) {
         return planRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Study plan not found"));
     }
 
     public StudyPlan createPlan(StudyPlan plan) {
-        return planRepository.save(plan);
+        List<StudyTask> tasksToSave = plan.getTasks();
+        plan.setTasks(new java.util.ArrayList<>());
+        StudyPlan savedPlan = planRepository.save(plan);
+
+        if (tasksToSave != null && !tasksToSave.isEmpty()) {
+            for (StudyTask task : tasksToSave) {
+                task.setStudyPlanId(savedPlan.getId());
+                taskRepository.save(task);
+            }
+            updateProgress(savedPlan);
+        }
+        return getPlanById(savedPlan.getId());
     }
 
     public StudyPlan updatePlan(Long id, StudyPlan updated) {

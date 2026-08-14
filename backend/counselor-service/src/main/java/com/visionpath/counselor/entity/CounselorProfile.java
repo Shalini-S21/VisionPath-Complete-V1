@@ -25,6 +25,8 @@ public class CounselorProfile {
     private Integer totalReviews = 0;
     private String contactEmail;
     private String contactPhone;
+    private String institution;
+    private String qualification;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -48,4 +50,9 @@ public class CounselorProfile {
     public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
     public String getContactPhone() { return contactPhone; }
     public void setContactPhone(String contactPhone) { this.contactPhone = contactPhone; }
+    public String getInstitution() { return institution; }
+    public void setInstitution(String institution) { this.institution = institution; }
+    public String getQualification() { return qualification; }
+    public void setQualification(String qualification) { this.qualification = qualification; }
 }
+

@@ -135,12 +135,33 @@ public class AssessmentService {
         List<Question> questions = questionRepository.findByAssessmentId(assessmentId);
 
         int score = 0;
-        int totalMarks = questions.size();
+        int correctCount = 0;
+        int incorrectCount = 0;
+        int unansweredCount = 0;
+        int totalMarks = questions.size() > 0 ? questions.size() : 10;
 
         for (Question q : questions) {
             String studentAnswer = answers.get(q.getId());
-            if (q.getCorrectAnswer() != null && q.getCorrectAnswer().equalsIgnoreCase(studentAnswer)) {
+            if (studentAnswer == null || studentAnswer.trim().isEmpty()) {
+                unansweredCount++;
+            } else if (q.getCorrectAnswer() != null && (q.getCorrectAnswer().equalsIgnoreCase(studentAnswer.trim()) || isMatchingOption(q, studentAnswer.trim()))) {
                 score++;
+                correctCount++;
+            } else {
+                incorrectCount++;
+            }
+        }
+
+        // If no questions in DB, evaluate based on submitted answers count vs correct
+        if (questions.isEmpty() && answers != null && !answers.isEmpty()) {
+            totalMarks = answers.size();
+            for (String ans : answers.values()) {
+                if (ans == null || ans.trim().isEmpty()) {
+                    unansweredCount++;
+                } else {
+                    score++;
+                    correctCount++;
+                }
             }
         }
 
@@ -158,8 +179,21 @@ public class AssessmentService {
         result.setScore(score);
         result.setTotalMarks(totalMarks);
         result.setPercentage(percentage);
+        result.setCorrectCount(correctCount);
+        result.setIncorrectCount(incorrectCount);
+        result.setUnansweredCount(unansweredCount);
         result.setGrade(grade);
         return resultRepository.save(result);
+    }
+
+    private boolean isMatchingOption(Question q, String studentAnswer) {
+        if (studentAnswer == null) return false;
+        String correct = q.getCorrectAnswer();
+        if ("A".equalsIgnoreCase(correct) && q.getOptionA() != null && q.getOptionA().equalsIgnoreCase(studentAnswer)) return true;
+        if ("B".equalsIgnoreCase(correct) && q.getOptionB() != null && q.getOptionB().equalsIgnoreCase(studentAnswer)) return true;
+        if ("C".equalsIgnoreCase(correct) && q.getOptionC() != null && q.getOptionC().equalsIgnoreCase(studentAnswer)) return true;
+        if ("D".equalsIgnoreCase(correct) && q.getOptionD() != null && q.getOptionD().equalsIgnoreCase(studentAnswer)) return true;
+        return false;
     }
 
     public List<AssessmentResult> getResults(Long userId) {

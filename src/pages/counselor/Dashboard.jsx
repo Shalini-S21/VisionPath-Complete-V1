@@ -40,7 +40,7 @@ export const Dashboard = () => {
   return (
     <div className="space-y-8">
       {/* Welcome Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#14532D] via-emerald-800 to-slate-900 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-emerald-800 via-emerald-700 to-slate-900 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold backdrop-blur-sm border border-emerald-400/20">
             <Sparkles className="w-3.5 h-3.5" />
@@ -55,7 +55,7 @@ export const Dashboard = () => {
         </div>
 
         <Link to="/counselor/assigned-students">
-          <Button variant="primary" size="md" icon={Users} className="bg-white text-emerald-950 hover:bg-emerald-50 font-bold">
+          <Button variant="white" size="md" icon={Users} className="!font-bold">
             View Assigned Roster ({assignedStudents.length})
           </Button>
         </Link>
@@ -63,7 +63,7 @@ export const Dashboard = () => {
 
       {loading ? (
         <div className="p-12 flex flex-col items-center justify-center text-slate-400 gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-600 dark:text-emerald-400" />
           <p className="text-sm font-semibold">Loading counselor statistics from counselor-service...</p>
         </div>
       ) : (
@@ -105,16 +105,16 @@ export const Dashboard = () => {
           </div>
 
           {/* Assigned Students Quick List */}
-          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+          <div className="p-6 rounded-3xl bg-white dark:bg-[#111814] border border-slate-200 dark:border-[#1F3327] shadow-xs space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">Assigned Students Roster</h3>
-              <Link to="/counselor/assigned-students" className="text-xs font-bold text-emerald-600 hover:underline">
+              <h3 className="text-base font-bold text-slate-900 dark:text-[#F3F4F6]">Assigned Students Roster</h3>
+              <Link to="/counselor/assigned-students" className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
                 View Full Roster &rarr;
               </Link>
             </div>
 
             {assignedStudents.length === 0 ? (
-              <div className="p-8 text-center text-xs text-slate-400">
+              <div className="p-8 text-center text-xs text-slate-400 dark:text-slate-500">
                 No students currently assigned to your counselor roster.
               </div>
             ) : (
@@ -122,12 +122,12 @@ export const Dashboard = () => {
                 {assignedStudents.slice(0, 6).map((std) => (
                   <div
                     key={std.id}
-                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 text-xs"
+                    className="p-4 rounded-2xl bg-slate-50 dark:bg-[#151E18] border border-slate-100 dark:border-[#1F3327] flex items-center justify-between gap-3 text-xs"
                   >
                     <div>
-                      <h4 className="font-bold text-slate-900 dark:text-white">{std.name || std.username || `Student #${std.id}`}</h4>
-                      <p className="text-[11px] text-emerald-600 font-semibold">{std.degree || std.standard || 'Student'}</p>
-                      <p className="text-[10px] text-slate-400">{std.email}</p>
+                      <h4 className="font-bold text-slate-900 dark:text-[#F3F4F6]">{std.name || std.username || `Student #${std.id}`}</h4>
+                      <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">{std.degree || std.standard || 'Student'}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500">{std.email}</p>
                     </div>
                   </div>
                 ))}

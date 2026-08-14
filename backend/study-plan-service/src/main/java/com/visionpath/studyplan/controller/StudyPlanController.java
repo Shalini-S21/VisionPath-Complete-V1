@@ -24,6 +24,11 @@ public class StudyPlanController {
         return ok("Study plans retrieved", studyPlanService.getPlansByUser(userId));
     }
 
+    @GetMapping("/student/{userId}/progress")
+    public ResponseEntity<Map<String, Object>> getStudentProgress(@PathVariable Long userId) {
+        return ok("Progress retrieved", studyPlanService.getStudentProgress(userId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getById(@PathVariable Long id) {
         return ok("Study plan found", studyPlanService.getPlanById(id));

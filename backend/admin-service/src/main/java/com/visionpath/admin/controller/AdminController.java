@@ -17,9 +17,39 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @GetMapping("/analytics")
+    @GetMapping({"/analytics", "/stats"})
     public ResponseEntity<Map<String, Object>> getAnalytics() {
         return ok("Analytics retrieved", adminService.getAnalytics());
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<Map<String, Object>> getUsers() {
+        return ok("Users retrieved", adminService.getUsers());
+    }
+
+    @GetMapping("/students")
+    public ResponseEntity<Map<String, Object>> getStudents() {
+        return ok("Students retrieved", adminService.getStudents());
+    }
+
+    @GetMapping("/counselors")
+    public ResponseEntity<Map<String, Object>> getCounselors() {
+        return ok("Counselors retrieved", adminService.getCounselors());
+    }
+
+    @GetMapping("/counselors/pending")
+    public ResponseEntity<Map<String, Object>> getPendingCounselors() {
+        return ok("Pending counselors retrieved", adminService.getPendingCounselors());
+    }
+
+    @PutMapping("/counselors/{id}/approve")
+    public ResponseEntity<Map<String, Object>> approveCounselor(@PathVariable Long id) {
+        return ok("Counselor approved", adminService.approveCounselor(id));
+    }
+
+    @PutMapping("/counselors/{id}/reject")
+    public ResponseEntity<Map<String, Object>> rejectCounselor(@PathVariable Long id) {
+        return ok("Counselor rejected", adminService.rejectCounselor(id));
     }
 
     private ResponseEntity<Map<String, Object>> ok(String message, Object data) {

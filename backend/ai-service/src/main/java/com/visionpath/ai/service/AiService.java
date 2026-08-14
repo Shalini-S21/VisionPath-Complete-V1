@@ -8,41 +8,43 @@ import org.springframework.stereotype.Service;
 @Service
 public class AiService {
 
-    private final AIProvider aiProvider;
+    private final LLMAIProvider llmAiProvider;
 
-    public AiService(AIProvider aiProvider) {
-        this.aiProvider = aiProvider;
+    public AiService(LLMAIProvider llmAiProvider) {
+        this.llmAiProvider = llmAiProvider;
     }
 
     public AiResponseDto generateQuestions(AiRequestDto request) {
-        return aiProvider.generateQuestions(request);
+        return llmAiProvider.generateQuestions(request);
     }
 
     public AiResponseDto analyzeAssessment(AiRequestDto request) {
-        return aiProvider.analyzeAssessment(request);
+        return llmAiProvider.analyzeAssessment(request);
     }
 
     public AiResponseDto recommendCareers(AiRequestDto request) {
-        return aiProvider.recommendCareers(request);
+        return llmAiProvider.recommendCareers(request);
     }
 
     public AiResponseDto analyzeSkillGap(AiRequestDto request) {
-        return aiProvider.analyzeSkillGap(request);
+        return llmAiProvider.analyzeSkillGap(request);
     }
 
     public AiResponseDto generateStudyPlan(AiRequestDto request) {
-        return aiProvider.generateStudyPlan(request);
+        return llmAiProvider.generateStudyPlan(request);
     }
 
     public AiResponseDto mentorChat(ChatMessageDto chatMessage) {
-        return aiProvider.chat(chatMessage.getMessage());
+        return llmAiProvider.chat(chatMessage.getMessage());
+    }
+
+    public AiResponseDto analyzeResume(AiRequestDto request) {
+        String text = request.getPrompt() != null ? request.getPrompt() : "Sample Resume Text";
+        String role = request.getTargetRole() != null ? request.getTargetRole() : "Full Stack Engineer";
+        return llmAiProvider.analyzeResume(text, role);
     }
 
     public AiResponseDto counselorSummary(Long studentId) {
-        AiRequestDto req = AiRequestDto.builder()
-                .studentId(studentId)
-                .category("Counseling Overview")
-                .build();
-        return aiProvider.analyzeAssessment(req);
+        return llmAiProvider.counselorSummary(studentId);
     }
 }

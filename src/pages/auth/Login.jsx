@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Lock, LogIn, Sparkles, GraduationCap, UserCheck, Shield } from 'lucide-react';
+import { User, Lock, LogIn, GraduationCap, UserCheck, Shield } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
@@ -43,40 +43,40 @@ export const Login = () => {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Sign In to VisionPath</h2>
-        <p className="text-xs text-slate-500">Access your AI-powered career roadmap & dashboard</p>
+        <h2 className="text-2xl font-black text-slate-900 dark:text-[#F3F4F6] tracking-tight">Sign In to VisionPath</h2>
+        <p className="text-xs text-slate-500 dark:text-slate-400">Access your AI-powered career roadmap & dashboard</p>
       </div>
 
       {/* Preset Credential Buttons */}
-      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 space-y-2">
-        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block text-center">
+      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#151E18] border border-slate-200 dark:border-[#1F3327] space-y-2">
+        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block text-center">
           Quick Demo Presets
         </span>
         <div className="grid grid-cols-3 gap-1.5">
           <button
             type="button"
             onClick={() => fillPreset('student@visionpath.com', 'password123')}
-            className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 text-xs font-bold flex flex-col items-center gap-1 transition-all"
+            className="p-2 rounded-xl bg-white dark:bg-[#111814] border border-slate-200 dark:border-[#1F3327] hover:border-emerald-500 text-xs font-bold flex flex-col items-center gap-1 transition-all text-slate-900 dark:text-[#F3F4F6] cursor-pointer"
           >
-            <GraduationCap className="w-4 h-4 text-emerald-600" />
+            <GraduationCap className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Student</span>
           </button>
 
           <button
             type="button"
             onClick={() => fillPreset('counselor@visionpath.com', 'password123')}
-            className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-purple-500 text-xs font-bold flex flex-col items-center gap-1 transition-all"
+            className="p-2 rounded-xl bg-white dark:bg-[#111814] border border-slate-200 dark:border-[#1F3327] hover:border-emerald-500 text-xs font-bold flex flex-col items-center gap-1 transition-all text-slate-900 dark:text-[#F3F4F6] cursor-pointer"
           >
-            <UserCheck className="w-4 h-4 text-purple-600" />
+            <UserCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Counselor</span>
           </button>
 
           <button
             type="button"
             onClick={() => fillPreset('admin@visionpath.com', 'admin123')}
-            className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-rose-500 text-xs font-bold flex flex-col items-center gap-1 transition-all"
+            className="p-2 rounded-xl bg-white dark:bg-[#111814] border border-slate-200 dark:border-[#1F3327] hover:border-emerald-500 text-xs font-bold flex flex-col items-center gap-1 transition-all text-slate-900 dark:text-[#F3F4F6] cursor-pointer"
           >
-            <Shield className="w-4 h-4 text-rose-600" />
+            <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Admin</span>
           </button>
         </div>
@@ -104,7 +104,7 @@ export const Login = () => {
         />
 
         <div className="flex items-center justify-between text-xs font-semibold">
-          <Link to="/forgot-password" className="text-emerald-600 hover:underline">
+          <Link to="/forgot-password" className="text-emerald-600 dark:text-emerald-400 hover:underline">
             Forgot password?
           </Link>
         </div>
@@ -114,9 +114,9 @@ export const Login = () => {
         </Button>
       </form>
 
-      <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100 dark:border-slate-800">
+      <div className="text-center text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-[#1F3327]">
         Don't have an account?{' '}
-        <Link to="/register" className="font-bold text-emerald-600 hover:underline">
+        <Link to="/register" className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
           Create Account
         </Link>
       </div>

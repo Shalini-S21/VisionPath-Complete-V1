@@ -59,42 +59,42 @@ export const CounselorMgmt = () => {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-          <UserCheck className="w-6 h-6 text-purple-600" />
+        <h1 className="text-2xl font-black text-slate-900 dark:text-[#F3F4F6] flex items-center gap-2">
+          <UserCheck className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
           Counselor Accreditation & Verification
         </h1>
-        <p className="text-xs text-slate-500 mt-0.5">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
           Review pending counselor registration requests and grant advisor platform access
         </p>
       </div>
 
       {loading ? (
         <div className="p-12 flex flex-col items-center justify-center text-slate-400 gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-600 dark:text-emerald-400" />
           <p className="text-sm font-semibold">Loading counselor applications from admin-service...</p>
         </div>
       ) : (
         <>
           {/* Pending Applications Table */}
-          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <div className="p-6 rounded-3xl bg-white dark:bg-[#111814] border border-slate-200 dark:border-[#1F3327] shadow-xs space-y-4">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-[#F3F4F6] flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
               Pending Applications ({pendingCounselors.length})
             </h2>
 
             {pendingCounselors.length === 0 ? (
-              <p className="text-xs text-slate-400 py-6 text-center">No pending counselor applications at this time.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 py-6 text-center">No pending counselor applications at this time.</p>
             ) : (
               <div className="space-y-3">
                 {pendingCounselors.map((c) => (
                   <div
                     key={c.id}
-                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs"
+                    className="p-4 rounded-2xl bg-slate-50 dark:bg-[#151E18] border border-slate-100 dark:border-[#1F3327] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs"
                   >
                     <div>
-                      <h4 className="font-bold text-slate-900 dark:text-white">{c.name || c.username}</h4>
-                      <p className="text-[11px] text-slate-400">{c.email}</p>
-                      <p className="text-[11px] font-semibold text-purple-600 mt-1">{c.institution || 'Partner Institution'} • {c.qualification || 'M.Sc.'}</p>
+                      <h4 className="font-bold text-slate-900 dark:text-[#F3F4F6]">{c.name || c.username}</h4>
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500">{c.email}</p>
+                      <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-1">{c.institution || 'Partner Institution'} • {c.qualification || 'M.Sc.'}</p>
                     </div>
 
                     <div className="flex gap-2">
@@ -112,20 +112,20 @@ export const CounselorMgmt = () => {
           </div>
 
           {/* Active Counselors Table */}
-          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Active Verified Counselors</h2>
+          <div className="p-6 rounded-3xl bg-white dark:bg-[#111814] border border-slate-200 dark:border-[#1F3327] shadow-xs space-y-4">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-[#F3F4F6]">Active Verified Counselors</h2>
             {activeCounselors.length === 0 ? (
-              <p className="text-xs text-slate-400 py-6 text-center">No active counselors found.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 py-6 text-center">No active counselors found.</p>
             ) : (
               <div className="space-y-3">
                 {activeCounselors.map((c) => (
                   <div
                     key={c.id}
-                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4 text-xs"
+                    className="p-4 rounded-2xl bg-slate-50 dark:bg-[#151E18] border border-slate-100 dark:border-[#1F3327] flex items-center justify-between gap-4 text-xs"
                   >
                     <div>
-                      <h4 className="font-bold text-slate-900 dark:text-white">{c.name || c.username}</h4>
-                      <p className="text-[11px] text-slate-400">{c.email}</p>
+                      <h4 className="font-bold text-slate-900 dark:text-[#F3F4F6]">{c.name || c.username}</h4>
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500">{c.email}</p>
                     </div>
                     <Badge variant="success" size="xs">APPROVED</Badge>
                   </div>

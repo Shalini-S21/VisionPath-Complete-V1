@@ -177,7 +177,7 @@ public class AuthService {
             throw new RuntimeException("Error processing reset token", e);
         }
     }
-
+    
     private void sendNotification(Long userId, String title, String message) {
         try {
             RestTemplate restTemplate = new RestTemplate();

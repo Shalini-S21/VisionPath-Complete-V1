@@ -2,9 +2,12 @@ import apiClient from '../api/apiClient';
 
 export const aiService = {
   mentorChat: (chatPayload) => apiClient.post('/ai/mentor/chat', chatPayload),
-  recommendCareers: (studentId) => apiClient.post('/ai/careers/recommend', { studentId }),
-  analyzeSkillGap: (payload) => apiClient.post('/ai/skills/analyze-gap', payload),
-  generateStudyPlan: (payload) => apiClient.post('/ai/study-plan/generate', payload),
+  generateQuestions: (payload) => apiClient.post('/ai/generate-questions', payload),
+  analyzeAssessment: (payload) => apiClient.post('/ai/analyze-assessment', payload),
+  recommendCareers: (payload) => apiClient.post('/ai/recommend-careers', payload),
+  analyzeSkillGap: (payload) => apiClient.post('/ai/analyze-skill-gap', payload),
+  generateStudyPlan: (payload) => apiClient.post('/ai/generate-study-plan', payload),
+  analyzeResume: (payload) => apiClient.post('/ai/analyze-resume', payload),
   counselorStudentSummary: (studentId) => apiClient.get(`/ai/counselor/student-summary/${studentId}`),
 };
 

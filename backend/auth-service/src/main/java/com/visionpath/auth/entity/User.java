@@ -59,6 +59,7 @@ public class User {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
+
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
 

@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -16,6 +18,12 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<UserProfileDto>>> getAllUsers() {
+        List<UserProfileDto> users = userService.getAllUsers();
+        return ResponseEntity.ok(ApiResponse.success("All users retrieved successfully", users));
     }
 
     @GetMapping("/{userId}")

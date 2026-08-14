@@ -65,8 +65,11 @@ public class CounselorService {
         if (updated.getExperienceYears() != null) cp.setExperienceYears(updated.getExperienceYears());
         if (updated.getContactEmail() != null) cp.setContactEmail(updated.getContactEmail());
         if (updated.getContactPhone() != null) cp.setContactPhone(updated.getContactPhone());
+        if (updated.getInstitution() != null) cp.setInstitution(updated.getInstitution());
+        if (updated.getQualification() != null) cp.setQualification(updated.getQualification());
         return profileRepository.save(cp);
     }
+
 
     // Appointments
     public Appointment bookAppointment(Appointment appointment) {

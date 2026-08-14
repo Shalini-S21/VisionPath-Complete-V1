@@ -20,6 +20,7 @@ export const Dashboard = () => {
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
     const fetchStudentDashboard = async () => {
       setLoading(true);
@@ -71,12 +72,12 @@ export const Dashboard = () => {
 
         <div className="flex flex-wrap items-center gap-3 z-10">
           <Link to="/student/career-roadmap">
-            <Button variant="primary" size="md" icon={Map} className="bg-white text-emerald-950 hover:bg-emerald-50 font-bold">
+            <Button variant="white" size="md" icon={Map} className="!font-bold">
               View Study Plan
             </Button>
           </Link>
           <Link to="/student/ai-career-assistant">
-            <Button variant="outline" size="md" icon={Sparkles} className="border-emerald-300 text-emerald-100 hover:bg-emerald-800/40">
+            <Button variant="outline" size="md" icon={Sparkles} className="!border-emerald-300 !text-emerald-100 hover:!bg-emerald-800/40">
               Ask AI Mentor
             </Button>
           </Link>
@@ -127,22 +128,22 @@ export const Dashboard = () => {
           </div>
 
           {/* Skills Portfolio Table */}
-          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+          <div className="p-6 rounded-3xl bg-white dark:bg-[#111814] border border-slate-200 dark:border-[#1F3327] shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Compass className="w-5 h-5 text-emerald-600" />
+                <h2 className="text-lg font-bold text-slate-900 dark:text-[#F3F4F6] flex items-center gap-2">
+                  <Compass className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   My Skills Portfolio
                 </h2>
-                <p className="text-xs text-slate-500">Retrieved from skill-service</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Retrieved from skill-service</p>
               </div>
-              <Link to="/student/skills" className="text-xs font-bold text-emerald-600 hover:underline">
+              <Link to="/student/skills" className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
                 Manage Skills &rarr;
               </Link>
             </div>
 
             {skills.length === 0 ? (
-              <div className="p-8 text-center text-xs text-slate-400 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+              <div className="p-8 text-center text-xs text-slate-400 dark:text-slate-500 border border-dashed border-slate-200 dark:border-[#1F3327] rounded-2xl">
                 No skills registered yet. Click 'Manage Skills' to build your matrix!
               </div>
             ) : (
@@ -150,13 +151,13 @@ export const Dashboard = () => {
                 {skills.slice(0, 6).map((sk) => (
                   <div
                     key={sk.id}
-                    className="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 text-xs"
+                    className="p-4 rounded-2xl bg-slate-50/80 dark:bg-[#151E18] border border-slate-100 dark:border-[#1F3327] flex items-center justify-between gap-3 text-xs"
                   >
                     <div className="flex items-center gap-3">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{sk.skillName || sk.name}</span>
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                      <span className="font-semibold text-slate-800 dark:text-[#F3F4F6]">{sk.skillName || sk.name}</span>
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-900">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-[#151E18] px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-[#1F3327]">
                       {sk.proficiencyLevel || 'INTERMEDIATE'}
                     </span>
                   </div>
@@ -164,6 +165,8 @@ export const Dashboard = () => {
               </div>
             )}
           </div>
+
+
         </>
       )}
     </div>

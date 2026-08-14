@@ -1,0 +1,169 @@
+{
+  "info": {
+    "name": "VisionPath AI Integration API Gateway Collection",
+    "description": "Postman Collection for all 8 VisionPath AI endpoints routed via API Gateway (:8080)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. AI Mentor Chat",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"message\": \"Explain Java inheritance with a simple example.\",\n  \"role\": \"STUDENT\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/ai/mentor/chat",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "ai", "mentor", "chat"]
+        }
+      }
+    },
+    {
+      "name": "2. Generate Assessment Questions",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"category\": \"Spring Boot & Microservices\",\n  \"academicLevel\": \"College Senior\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/ai/generate-questions",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "ai", "generate-questions"]
+        }
+      }
+    },
+    {
+      "name": "3. Analyze Assessment",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"category\": \"Backend Architecture\",\n  \"prompt\": \"Score 90%. Excellent on REST APIs, needs practice on Docker.\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/ai/analyze-assessment",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "ai", "analyze-assessment"]
+        }
+      }
+    },
+    {
+      "name": "4. Recommend Careers",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"academicLevel\": \"B.Tech Computer Science\",\n  \"category\": \"AI & Cloud\",\n  \"prompt\": \"Skills: Java, React, SQL, Python\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/ai/recommend-careers",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "ai", "recommend-careers"]
+        }
+      }
+    },
+    {
+      "name": "5. Analyze Skill Gap",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"targetRole\": \"Full Stack AI Engineer\",\n  \"prompt\": \"Current: React, Java. Missing: PyTorch, Docker\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/ai/analyze-skill-gap",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "ai", "analyze-skill-gap"]
+        }
+      }
+    },
+    {
+      "name": "6. Generate Study Plan",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"academicLevel\": \"4th Year\",\n  \"prompt\": \"Master Spring Microservices & AWS deployment in 4 weeks\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/ai/generate-study-plan",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "ai", "generate-study-plan"]
+        }
+      }
+    },
+    {
+      "name": "7. Analyze Resume",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"targetRole\": \"Cloud Architect\",\n  \"prompt\": \"John Doe Resume: Full Stack Developer with 2 years Java experience...\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/ai/analyze-resume",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "ai", "analyze-resume"]
+        }
+      }
+    },
+    {
+      "name": "8. Counselor Student Summary",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/ai/counselor/student-summary",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "ai", "counselor", "student-summary"]
+        }
+      }
+    }
+  ]
+}
