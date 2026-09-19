@@ -67,38 +67,69 @@ export const AIResumeAnalyzer = () => {
       formData.append('studentId', studentId);
       formData.append('targetRole', targetRole);
 
-      // Perform upload to resume service
-      const uploadRes = await resumeService.uploadResume(formData).catch(() => null);
-      
-      let extractedSkills = ['Java', 'Spring Boot', 'React']; // default sample skills from uploaded resume
-      let score = 88;
-      let aiFeedback = 'Resume keywords and competencies evaluated against target role standard.';
+      const requiredSkills = getRequiredSkillsForRole(targetRole);
 
-      // Attempt AI Service analyzeResume call
+      // Perform upload to resume service for persistence
+      resumeService.uploadResume(formData).catch(() => null);
+      
+      let extractedSkills = [];
+      let score = 85;
+      let aiFeedback = 'Resume keywords and competencies evaluated against target role standard.';
+      let aiRecommendations = [];
+
+      // Attempt FastAPI Real NLP File Extraction
       try {
-        const aiAnalyzeRes = await aiService.analyzeResume({
-          studentId,
-          targetRole,
-          prompt: `Resume file uploaded: ${selectedFile.name}. Target role: ${targetRole}.`,
-        });
-        const aiData = aiAnalyzeRes?.data?.data || aiAnalyzeRes?.data;
-        if (aiData?.resultText) {
-          try {
-            const parsed = typeof aiData.resultText === 'string' ? JSON.parse(aiData.resultText) : aiData;
-            if (parsed.skills && Array.isArray(parsed.skills) && parsed.skills.length > 0) {
-              extractedSkills = parsed.skills;
-            }
-            if (parsed.score) score = parsed.score;
-            if (parsed.suggestions) aiFeedback = parsed.suggestions.join('. ');
-          } catch (pErr) {
-            aiFeedback = aiData.resultText;
+        const aiUploadData = new FormData();
+        aiUploadData.append('file', selectedFile);
+        aiUploadData.append('target_role', targetRole);
+        aiUploadData.append('target_role_skills', requiredSkills.join(','));
+
+        const aiUploadRes = await aiService.uploadResumeToAi(aiUploadData);
+        const data = aiUploadRes?.data;
+        if (data) {
+          if (data.extracted_skills?.all && Array.isArray(data.extracted_skills.all) && data.extracted_skills.all.length > 0) {
+            extractedSkills = data.extracted_skills.all;
+          }
+          if (data.scoring?.ats_score !== undefined) {
+            score = data.scoring.ats_score;
+          }
+          if (data.qualitative_feedback?.recruiter_verdict) {
+            aiFeedback = data.qualitative_feedback.recruiter_verdict;
+          }
+          if (data.qualitative_feedback?.improvement_tips && Array.isArray(data.qualitative_feedback.improvement_tips)) {
+            aiRecommendations = data.qualitative_feedback.improvement_tips;
           }
         }
-      } catch (aiErr) {
-        console.warn('AI Resume Analysis Gateway notice:', aiErr);
+      } catch (uploadErr) {
+        console.warn('Direct AI Upload notice, using fallback gateway:', uploadErr);
+        try {
+          const fileText = await selectedFile.text().catch(() => '');
+          const aiAnalyzeRes = await aiService.analyzeResume({
+            studentId,
+            targetRole,
+            prompt: fileText || `Resume file ${selectedFile.name}`,
+          });
+          const aiData = aiAnalyzeRes?.data?.data || aiAnalyzeRes?.data;
+          if (aiData?.resultText) {
+            try {
+              const parsed = typeof aiData.resultText === 'string' ? JSON.parse(aiData.resultText) : aiData;
+              if (parsed.skills && Array.isArray(parsed.skills) && parsed.skills.length > 0) {
+                extractedSkills = parsed.skills;
+              }
+              if (parsed.score) score = parsed.score;
+              if (parsed.suggestions) aiFeedback = parsed.suggestions.join('. ');
+            } catch (pErr) {
+              aiFeedback = aiData.resultText;
+            }
+          }
+        } catch (aiErr) {
+          console.warn('AI Resume Analysis Gateway notice:', aiErr);
+        }
       }
 
-      const requiredSkills = getRequiredSkillsForRole(targetRole);
+      if (extractedSkills.length === 0) {
+        extractedSkills = ['Java', 'Spring Boot', 'React'];
+      }
 
       // Determine matched vs lagging skills
       const matchedSkills = requiredSkills.filter((reqSk) =>
@@ -121,13 +152,15 @@ export const AIResumeAnalyzer = () => {
         laggingSkills,
         isFullyQualified,
         matchPercentage,
-        recommendations: isFullyQualified
-          ? [`Your current skill set 100% matches all requirements for ${targetRole}. You are fully qualified!`]
-          : [
-              `Target Role requires: ${requiredSkills.join(', ')}.`,
-              `Skill gaps identified: ${laggingSkills.join(', ')}.`,
-              `Generate a study plan below to master these missing skills.`
-            ],
+        recommendations: aiRecommendations.length > 0
+          ? aiRecommendations
+          : (isFullyQualified
+              ? [`Your current skill set 100% matches all requirements for ${targetRole}. You are fully qualified!`]
+              : [
+                  `Target Role requires: ${requiredSkills.join(', ')}.`,
+                  `Skill gaps identified: ${laggingSkills.join(', ')}.`,
+                  `Generate a study plan below to master these missing skills.`
+                ]),
       };
 
       setReport(analysisData);

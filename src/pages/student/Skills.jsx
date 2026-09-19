@@ -60,15 +60,22 @@ export const Skills = () => {
     setLoading(true);
     try {
       const studentId = user?.id || 1;
-      const [userSkillsRes, allSkillsRes] = await Promise.all([
-        skillService.getStudentSkills(studentId).catch(() => studentService.getSkills()),
-        skillService.getAllSkills().catch(() => ({ data: [] })),
+      const [skillServiceRes, studentServiceRes, allSkillsRes] = await Promise.all([
+        skillService.getStudentSkills(studentId).catch(() => ({ data: { data: [] } })),
+        studentService.getSkills(studentId).catch(() => ({ data: { data: [] } })),
+        skillService.getAllSkills().catch(() => ({ data: { data: [] } })),
       ]);
 
-      const userSkillsData = userSkillsRes.data?.data || userSkillsRes.data || [];
+      const skillServiceData = skillServiceRes.data?.data || skillServiceRes.data || [];
+      const studentServiceData = studentServiceRes.data?.data || studentServiceRes.data || [];
       const allSkillsData = allSkillsRes.data?.data || allSkillsRes.data || [];
 
-      setSkills(Array.isArray(userSkillsData) ? userSkillsData : []);
+      const combined = [
+        ...(Array.isArray(skillServiceData) ? skillServiceData : []),
+        ...(Array.isArray(studentServiceData) ? studentServiceData : [])
+      ];
+
+      setSkills(combined);
       setAvailableSkills(Array.isArray(allSkillsData) ? allSkillsData : []);
     } catch (err) {
       console.error('Failed to load skills:', err);
@@ -93,7 +100,7 @@ export const Skills = () => {
           source: 'MANUAL',
         });
       } else if (customSkillName) {
-        await studentService.addSkill(customSkillName, level);
+        await studentService.addSkill(studentId, customSkillName, level);
       }
       toast.success('Skill added successfully!');
       fetchSkillsData();
@@ -114,7 +121,7 @@ export const Skills = () => {
       if (skillId) {
         await skillService.deleteStudentSkill(studentId, skillId);
       } else {
-        await studentService.deleteSkill(id);
+        await studentService.deleteSkill(id, studentId);
       }
       toast.success('Skill removed.');
       fetchSkillsData();

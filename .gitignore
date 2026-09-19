@@ -47,3 +47,4 @@ bin/
 !.env.example
 # Maven build output
 **/target/
+/.metadata/
