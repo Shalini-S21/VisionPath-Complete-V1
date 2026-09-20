@@ -1,0 +1,76 @@
+name: visionpath
+
+networks:
+  visionpath-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+
+services:
+  # ============================================================================
+  # 1. PostgreSQL Database
+  # ============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: visionpath-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgre123}
+      POSTGRES_DB: visionpath_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    networks:
+      - visionpath-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # 2. VisionPath ML & NLP AI Service (FastAPI)
+  # ============================================================================
+  visionpath-ml-service:
+    build:
+      context: ./visionpath-ml-service
+      dockerfile: Dockerfile
+    container_name: visionpath-ml-service
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-1.5-flash}
+    networks:
+      - visionpath-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ============================================================================
+  # 3. VisionPath Frontend (React + Vite + Tailwind via Nginx)
+  # ============================================================================
+  visionpath-frontend:
+    build:
+      context: ./visionpath-frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=http://localhost:8080
+    container_name: visionpath-frontend
+    restart: always
+    ports:
+      - "5173:80"
+      - "80:80"
+    depends_on:
+      - visionpath-ml-service
+    networks:
+      - visionpath-network
